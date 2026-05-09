@@ -72,7 +72,7 @@ function LeadsPage() {
     }
 
     return (
-        <div>
+        <div className="space-y-2">
             <h2>Leads Management</h2>
 
             {/* Search Input */}

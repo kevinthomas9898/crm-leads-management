@@ -1,11 +1,7 @@
-import axios from "axios";
-
-const API = axios.create({
-  baseURL: "https://crm-leads-management-server.onrender.com/api",
-});
+import api from "./axios";
 
 export const fetchLeads = async (params: any) => {
-  const response = await API.get("/leads", {
+  const response = await api.get("/leads", {
     params,
   });
 
@@ -13,7 +9,7 @@ export const fetchLeads = async (params: any) => {
 };
 
 export const globalSearch = async (query: string) => {
-  const response = await API.get(`/search/global?query=${query}`);
+  const response = await api.get(`/search/global?query=${query}`);
 
   return response.data;
 };

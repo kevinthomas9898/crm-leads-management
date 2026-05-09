@@ -8,6 +8,7 @@ const connectDB = require("./config/db");
 // Routes
 const leadRoutes = require("./routes/leadRoutes");
 const searchRoutes = require("./routes/searchRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 // Config
 dotenv.config();
@@ -20,6 +21,10 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+
+// Auth Routes
+app.use("/api/auth",authRoutes);
 
 // Test Route
 app.get("/", (req, res) => {
