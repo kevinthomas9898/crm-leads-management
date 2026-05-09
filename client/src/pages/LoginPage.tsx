@@ -29,17 +29,17 @@ function LoginPage() {
     };
 
     return (
-        <div className="h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 pt-20 overflow-y-auto">
-            <div className="w-full max-w-md my-auto">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 pt-20 overflow-y-auto">
+            <div className="w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-12">
                 {/* Logo/Brand */}
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">CRM System</h1>
-                    <p className="text-gray-600">Welcome back! Please login to continue</p>
+                <div className="text-center lg:text-left lg:max-w-md">
+                    <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">CRM System</h1>
+                    <p className="text-lg text-gray-600">Welcome back! Please login to continue</p>
                 </div>
 
                 <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
+                    className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 w-full max-w-md"
                 >
                     <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
                         Login to Your Account
