@@ -17,15 +17,14 @@ function Navbar() {
     localStorage.getItem("token");
 
   const handleLogout = () => {
-    localStorage.removeItem(
-      "token"
-    );
-
-    localStorage.removeItem(
-      "user"
-    );
-
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setOpen(false);
     navigate("/login");
+  };
+
+  const handleMenuClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -50,12 +49,20 @@ function Navbar() {
               Logout
             </button>
           ) : (
-            <Link
-              to="/login"
-              className="bg-black text-white px-4 py-2 rounded-lg"
-            >
-              Login
-            </Link>
+            <>
+              <Link
+                to="/login"
+                className="bg-black text-white px-4 py-2 rounded-lg"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300"
+              >
+                Register
+              </Link>
+            </>
           )}
         </div>
 
@@ -85,12 +92,22 @@ function Navbar() {
               Logout
             </button>
           ) : (
-            <Link
-              to="/login"
-              className="bg-black text-white px-4 py-2 rounded-lg text-center"
-            >
-              Login
-            </Link>
+            <>
+              <Link
+                to="/login"
+                onClick={handleMenuClose}
+                className="bg-black text-white px-4 py-2 rounded-lg text-center"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                onClick={handleMenuClose}
+                className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-center hover:bg-gray-300"
+              >
+                Register
+              </Link>
+            </>
           )}
         </div>
       )}

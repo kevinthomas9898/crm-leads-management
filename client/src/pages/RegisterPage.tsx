@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import api from "../api/axios";
+import { registerUser } from "../api/authApi";
 
 interface RegisterFormData {
   name: string;
@@ -21,7 +21,7 @@ function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      await api.post("/auth/register", data);
+      await registerUser(data);
       navigate("/login");
     } catch (err) {
       setError("root", { message: "Registration failed" });

@@ -8,10 +8,11 @@ import {
 import { lazy, Suspense } from "react";
 
 import LoginPage from "./pages/LoginPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import RegisterPage from "./pages/RegisterPage";
 
 import GlobalSearch from "./components/GlobalSearch";
 import Navbar from "./components/Navbar";
-import RegisterPage from "./pages/RegisterPage";
 
 const LeadsPage = lazy(
   () => import("./pages/LeadsPage")
@@ -36,6 +37,25 @@ function ProtectedRoute({
   return children;
 }
 
+function PublicRoute({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const token =
+    localStorage.getItem(
+      "token"
+    );
+
+  if (token) {
+    return (
+      <Navigate to="/" />
+    );
+  }
+
+  return children;
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -43,12 +63,20 @@ function App() {
       <Routes>
         <Route
           path="/login"
-          element={<LoginPage />}
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
         />
 
         <Route
           path="/register"
-          element={<RegisterPage />}
+          element={
+            <PublicRoute>
+              <RegisterPage />
+            </PublicRoute>
+          }
         />
 
         <Route
@@ -77,6 +105,11 @@ function App() {
               </div>
             </ProtectedRoute>
           }
+        />
+
+        <Route
+          path="*"
+          element={<NotFoundPage />}
         />
       </Routes>
     </BrowserRouter>
