@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://crm-leads-management-server.onrender.com/api",
 });
 
 export const fetchLeads = async (params: any) => {
