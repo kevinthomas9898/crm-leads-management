@@ -1,99 +1,94 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
 import api from "../api/axios";
 
+interface RegisterFormData {
+  name: string;
+  email: string;
+  password: string;
+}
 
 function RegisterPage() {
   const navigate = useNavigate();
 
-  const [name, setName] =
-    useState("");
+  const { control, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<RegisterFormData>({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
 
-  const [email, setEmail] =
-    useState("");
-
-  const [password, setPassword] =
-    useState("");
-
-  const [error, setError] =
-    useState("");
-
-  const handleRegister = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
-
+  const onSubmit = async (data: RegisterFormData) => {
     try {
-      await api.post(
-        "/auth/register",
-        {
-          name,
-          email,
-          password,
-        }
-      );
-
+      await api.post("/auth/register", data);
       navigate("/login");
     } catch (err) {
-      setError(
-        "Registration failed"
-      );
+      setError("root", { message: "Registration failed" });
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
-        onSubmit={handleRegister}
+        onSubmit={handleSubmit(onSubmit)}
         className="bg-white p-8 rounded-xl shadow-md w-full max-w-md"
       >
         <h2 className="text-2xl font-bold mb-6 text-center">
           Register
         </h2>
 
-        {error && (
+        {errors.root && (
           <p className="text-red-500 mb-4">
-            {error}
+            {errors.root.message}
           </p>
         )}
 
-        <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
+        <Controller
+          name="name"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              type="text"
+              placeholder="Name"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
+            />
+          )}
         />
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              type="email"
+              placeholder="Email"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
+            />
+          )}
         />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) =>
-            setPassword(
-              e.target.value
-            )
-          }
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-6"
+        <Controller
+          name="password"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              type="password"
+              placeholder="Password"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-6"
+            />
+          )}
         />
 
         <button
           type="submit"
-          className="w-full bg-black text-white py-2 rounded-lg"
+          disabled={isSubmitting}
+          className="w-full bg-black text-white py-2 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          Register
+          {isSubmitting ? "Registering..." : "Register"}
         </button>
 
         <p className="text-center mt-4">

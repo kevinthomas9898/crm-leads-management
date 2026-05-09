@@ -1,94 +1,81 @@
-import { useState } from "react";
-
 import { useNavigate } from "react-router-dom";
-
+import { useForm, Controller } from "react-hook-form";
 import { loginUser } from "../api/authApi";
+
+interface LoginFormData {
+    email: string;
+    password: string;
+}
 
 function LoginPage() {
     const navigate = useNavigate();
 
-    const [email, setEmail] =
-        useState("");
+    const { control, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<LoginFormData>({
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    });
 
-    const [password, setPassword] =
-        useState("");
-
-    const [error, setError] =
-        useState("");
-
-    const handleLogin = async (
-        e: React.FormEvent
-    ) => {
-        e.preventDefault();
-
+    const onSubmit = async (data: LoginFormData) => {
         try {
-            const data =
-                await loginUser({
-                    email,
-                    password,
-                });
-
-            localStorage.setItem(
-                "token",
-                data.token
-            );
-
-            localStorage.setItem(
-                "user",
-                JSON.stringify(data.user)
-            );
-
+            const response = await loginUser(data);
+            localStorage.setItem("token", response.token);
+            localStorage.setItem("user", JSON.stringify(response.user));
             navigate("/");
         } catch (err) {
-            setError(
-                "Invalid credentials"
-            );
+            setError("root", { message: "Invalid credentials" });
         }
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <form
-                onSubmit={handleLogin}
+                onSubmit={handleSubmit(onSubmit)}
                 className="bg-white p-8 rounded-xl shadow-md w-full max-w-md"
             >
                 <h2 className="text-2xl font-bold mb-6 text-center">
                     Login
                 </h2>
 
-                {error && (
+                {errors.root && (
                     <p className="text-red-500 mb-4">
-                        {error}
+                        {errors.root.message}
                     </p>
                 )}
 
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) =>
-                        setEmail(e.target.value)
-                    }
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
+                <Controller
+                    name="email"
+                    control={control}
+                    render={({ field }) => (
+                        <input
+                            {...field}
+                            type="email"
+                            placeholder="Email"
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
+                        />
+                    )}
                 />
 
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) =>
-                        setPassword(
-                            e.target.value
-                        )
-                    }
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-6"
+                <Controller
+                    name="password"
+                    control={control}
+                    render={({ field }) => (
+                        <input
+                            {...field}
+                            type="password"
+                            placeholder="Password"
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-6"
+                        />
+                    )}
                 />
 
                 <button
                     type="submit"
-                    className="w-full bg-black text-white py-2 rounded-lg"
+                    disabled={isSubmitting}
+                    className="w-full bg-black text-white py-2 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                    Login
+                    {isSubmitting ? "Logging in..." : "Login"}
                 </button>
                 <p className="text-center mt-4">
                     Don't have an account?{" "}
