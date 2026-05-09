@@ -4,8 +4,13 @@ import { fetchLeads } from "../api/leadApi";
 import { columns } from "../table/columns";
 import DataTable from "../components/DataTable";
 import { useMemo } from "react";
+import type { Lead } from "../types/lead";
 
-function LeadsPage() {
+interface LeadsPageProps {
+    selectedLead: Lead | null;
+}
+
+function LeadsPage({ selectedLead }: LeadsPageProps) {
     const [page, setPage] = useState(1);
 
     const [search, setSearch] = useState("");
@@ -37,6 +42,13 @@ function LeadsPage() {
         sortBy,
         sortOrder,
     ]);
+
+    // Handle lead selection from global search
+    useEffect(() => {
+        if (selectedLead) {
+            setSearch(selectedLead.name);
+        }
+    }, [selectedLead]);
 
     const { data, isLoading, error } = useQuery({
         queryKey: [
@@ -72,118 +84,100 @@ function LeadsPage() {
     }
 
     return (
-        <div className="space-y-2">
-            <h2>Leads Management</h2>
-
-            {/* Search Input */}
-            <input
-                type="text"
-                placeholder="Search leads..."
-                value={search}
-                onChange={(e) =>
-                    setSearch(e.target.value)
-                }
-                className="border border-gray-300 rounded-lg px-4 py-2 w-full max-w-md bg-white"
-            />
-
-            <div className="flex gap-4 mb-4" >
-                {/* Status Filter */}
-                <select
-                    className="border border-gray-300 rounded-lg px-3 py-2 bg-white"
-                    value={status}
-                    onChange={(e) =>
-                        setStatus(e.target.value)
-                    }
-                >
-                    <option value="">
-                        All Status
-                    </option>
-
-                    <option value="New">
-                        New
-                    </option>
-
-                    <option value="Contacted">
-                        Contacted
-                    </option>
-
-                    <option value="Qualified">
-                        Qualified
-                    </option>
-
-                    <option value="Lost">
-                        Lost
-                    </option>
-                </select>
-
-                {/* Owner Filter */}
-                <select
-                    className="border border-gray-300 rounded-lg px-3 py-2 bg-white"
-                    value={owner}
-                    onChange={(e) =>
-                        setOwner(e.target.value)
-                    }
-                >
-                    <option value="">
-                        All Owners
-                    </option>
-
-                    <option value="Kevin">
-                        Kevin
-                    </option>
-
-                    <option value="John">
-                        John
-                    </option>
-
-                    <option value="Sarah">
-                        Sarah
-                    </option>
-
-                    <option value="Mike">
-                        Mike
-                    </option>
-                </select>
+        <div className="space-y-6">
+            {/* Header Section */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Leads Management</h2>
+                    <p className="text-gray-500 text-sm mt-1">Manage and track your leads efficiently</p>
+                </div>
             </div>
 
-            <DataTable
-                columns={memoizedColumns}
-                data={data.data}
-                sortBy={sortBy}
-                sortOrder={sortOrder}
-                setSortBy={setSortBy}
-                setSortOrder={setSortOrder}
-            />
+            {/* Filters Section */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div className="flex flex-col lg:flex-row gap-4">
+                    {/* Search Input */}
+                    <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                        <input
+                            type="text"
+                            placeholder="Search by name, email, or company..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                        />
+                    </div>
+
+                    {/* Status Filter */}
+                    <div className="lg:w-48">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <select
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                        >
+                            <option value="">All Status</option>
+                            <option value="New">New</option>
+                            <option value="Contacted">Contacted</option>
+                            <option value="Qualified">Qualified</option>
+                            <option value="Lost">Lost</option>
+                        </select>
+                    </div>
+
+                    {/* Owner Filter */}
+                    <div className="lg:w-48">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Owner</label>
+                        <select
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                            value={owner}
+                            onChange={(e) => setOwner(e.target.value)}
+                        >
+                            <option value="">All Owners</option>
+                            <option value="Kevin">Kevin</option>
+                            <option value="John">John</option>
+                            <option value="Sarah">Sarah</option>
+                            <option value="Mike">Mike</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            {/* Table Section */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                <DataTable
+                    columns={memoizedColumns}
+                    data={data.data}
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
+                    setSortBy={setSortBy}
+                    setSortOrder={setSortOrder}
+                />
+            </div>
 
             {/* Pagination */}
-            <div className="flex items-center gap-4 mt-6" >
-                <button
-                    onClick={() =>
-                        setPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    disabled={page === 1}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed transition-colors duration-200"
-                >
-                    Previous
-                </button>
-
-                <span className="px-4 py-2 text-gray-700 font-medium">
-                    Page {page} of {data.totalPages}
-                </span>
-
-                <button
-                    onClick={() =>
-                        setPage((prev) =>
-                            prev < data.totalPages
-                                ? prev + 1
-                                : prev
-                        )
-                    }
-                    disabled={page === data.totalPages}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed transition-colors duration-200"
-                >
-                    Next
-                </button>
+            <div className="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-200 px-6 py-4">
+                <div className="text-sm text-gray-600">
+                    Showing <span className="font-semibold">{((page - 1) * limit) + 1}</span> to <span className="font-semibold">{Math.min(page * limit, data.total)}</span> of <span className="font-semibold">{data.total}</span> leads
+                </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={page === 1}
+                        className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                    >
+                        Previous
+                    </button>
+                    <div className="px-4 py-2 text-gray-700 font-medium">
+                        Page <span className="text-blue-600">{page}</span> of <span className="text-blue-600">{data.totalPages}</span>
+                    </div>
+                    <button
+                        onClick={() => setPage((prev) => prev < data.totalPages ? prev + 1 : prev)}
+                        disabled={page === data.totalPages}
+                        className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     );

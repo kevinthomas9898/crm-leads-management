@@ -37,9 +37,9 @@ function DataTable<T>({
     });
 
     return (
-        <div className="overflow-x-auto bg-white rounded-xl shadow">
+        <div className="overflow-x-auto">
             <table className="w-full border-collapse">
-                <thead className="bg-gray-100">
+                <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
                     {table
                         .getHeaderGroups()
                         .map((headerGroup) => (
@@ -49,8 +49,7 @@ function DataTable<T>({
                                         <th
                                             key={header.id}
                                             onClick={() => {
-                                                const column =
-                                                    header.column.id;
+                                                const column = header.column.id;
 
                                                 if (
                                                     sortBy === column
@@ -63,26 +62,22 @@ function DataTable<T>({
                                                     );
                                                 } else {
                                                     setSortBy(column);
-
-                                                    setSortOrder(
-                                                        "asc"
-                                                    );
+                                                    setSortOrder("asc");
                                                 }
                                             }}
-                                            className="px-4 py-3 text-left cursor-pointer select-none"
+                                            className="px-6 py-4 text-left text-sm font-semibold text-gray-700 cursor-pointer select-none hover:bg-gray-200 transition-colors duration-200 first:rounded-tl-xl last:rounded-tr-xl"
                                         >
-                                            {flexRender(
-                                                header.column
-                                                    .columnDef.header,
-                                                header.getContext()
-                                            )}
-
-                                            {sortBy ===
-                                                header.column.id &&
-                                                (sortOrder ===
-                                                    "asc"
-                                                    ? " ↑"
-                                                    : " ↓")}
+                                            <div className="flex items-center gap-2">
+                                                {flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
+                                                {sortBy === header.column.id && (
+                                                    <span className="text-blue-600">
+                                                        {sortOrder === "asc" ? "↑" : "↓"}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </th>
                                     )
                                 )}
@@ -90,24 +85,23 @@ function DataTable<T>({
                         ))}
                 </thead>
 
-                <tbody>
+                <tbody className="divide-y divide-gray-100">
                     {table
                         .getRowModel()
-                        .rows.map((row) => (
+                        .rows.map((row, index) => (
                             <tr
                                 key={row.id}
-                                className="border-t hover:bg-gray-50"
+                                className="hover:bg-blue-50 transition-colors duration-200"
                             >
                                 {row
                                     .getVisibleCells()
                                     .map((cell) => (
                                         <td
                                             key={cell.id}
-                                            className="px-4 py-3"
+                                            className="px-6 py-4 text-sm text-gray-700"
                                         >
                                             {flexRender(
-                                                cell.column
-                                                    .columnDef.cell,
+                                                cell.column.columnDef.cell,
                                                 cell.getContext()
                                             )}
                                         </td>

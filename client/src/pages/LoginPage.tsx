@@ -29,66 +29,81 @@ function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="bg-white p-8 rounded-xl shadow-md w-full max-w-md"
-            >
-                <h2 className="text-2xl font-bold mb-6 text-center">
-                    Login
-                </h2>
+        <div className="h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 pt-20 overflow-y-auto">
+            <div className="w-full max-w-md my-auto">
+                {/* Logo/Brand */}
+                <div className="text-center mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">CRM System</h1>
+                    <p className="text-gray-600">Welcome back! Please login to continue</p>
+                </div>
 
-                {errors.root && (
-                    <p className="text-red-500 mb-4">
-                        {errors.root.message}
-                    </p>
-                )}
-
-                <Controller
-                    name="email"
-                    control={control}
-                    render={({ field }) => (
-                        <input
-                            {...field}
-                            type="email"
-                            placeholder="Email"
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
-                        />
-                    )}
-                />
-
-                <Controller
-                    name="password"
-                    control={control}
-                    render={({ field }) => (
-                        <input
-                            {...field}
-                            type="password"
-                            placeholder="Password"
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-6"
-                        />
-                    )}
-                />
-
-                <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-black text-white py-2 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
                 >
-                    {isSubmitting ? "Logging in..." : "Login"}
-                </button>
-                <p className="text-center mt-4">
-                    Don't have an account?{" "}
-                    <span
-                        onClick={() =>
-                            navigate("/register")
-                        }
-                        className="text-blue-500 cursor-pointer"
-                    >
-                        Register
-                    </span>
-                </p>
-            </form>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
+                        Login to Your Account
+                    </h2>
+
+                    {errors.root && (
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                            {errors.root.message}
+                        </div>
+                    )}
+
+                    <div className="space-y-5">
+                        <Controller
+                            name="email"
+                            control={control}
+                            render={({ field }) => (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                    <input
+                                        {...field}
+                                        type="email"
+                                        placeholder="you@example.com"
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                                    />
+                                </div>
+                            )}
+                        />
+
+                        <Controller
+                            name="password"
+                            control={control}
+                            render={({ field }) => (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                    <input
+                                        {...field}
+                                        type="password"
+                                        placeholder="••••••••"
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                                    />
+                                </div>
+                            )}
+                        />
+
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-lg font-medium transition-all duration-200 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+                        >
+                            {isSubmitting ? "Logging in..." : "Login"}
+                        </button>
+                    </div>
+
+                    <p className="text-center mt-6 text-gray-600">
+                        Don't have an account?{" "}
+                        <span
+                            onClick={() => navigate("/register")}
+                            className="text-blue-600 font-medium cursor-pointer hover:text-blue-700 transition-colors"
+                        >
+                            Register
+                        </span>
+                    </p>
+                </form>
+            </div>
         </div>
     );
 }

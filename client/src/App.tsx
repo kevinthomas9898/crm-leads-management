@@ -5,7 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 
 import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -13,6 +13,8 @@ import RegisterPage from "./pages/RegisterPage";
 
 import GlobalSearch from "./components/GlobalSearch";
 import Navbar from "./components/Navbar";
+
+import type { Lead } from "./types/lead";
 
 const LeadsPage = lazy(
   () => import("./pages/LeadsPage")
@@ -57,6 +59,12 @@ function PublicRoute({
 }
 
 function App() {
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+
+  const handleLeadSelect = (lead: Lead) => {
+    setSelectedLead(lead);
+  };
+
   return (
     <BrowserRouter>
       <Navbar />
@@ -83,23 +91,27 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <div className="min-h-screen bg-gray-100 p-6 pt-24">
+              <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 pt-28">
                 <div className="max-w-7xl mx-auto">
-                  <h1 className="text-3xl font-bold mb-6">
-                    CRM Leads
-                    Management
-                  </h1>
+                  <div className="mb-8">
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                      CRM Leads Management
+                    </h1>
+                    <p className="text-gray-600 mt-2">
+                      Track, manage, and convert your leads efficiently
+                    </p>
+                  </div>
 
-                  <GlobalSearch />
+                  <GlobalSearch onLeadSelect={handleLeadSelect} />
 
                   <Suspense
                     fallback={
-                      <h2>
-                        Loading...
-                      </h2>
+                      <div className="flex items-center justify-center py-12">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                      </div>
                     }
                   >
-                    <LeadsPage />
+                    <LeadsPage selectedLead={selectedLead} />
                   </Suspense>
                 </div>
               </div>

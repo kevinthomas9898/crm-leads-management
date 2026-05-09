@@ -62,6 +62,7 @@ This project demonstrates enterprise-grade patterns for a CRM system, including:
 | **MongoDB + Mongoose** | 9 | Database & ODM |
 | **JSON Web Token (JWT)** | 9 | Authentication tokens |
 | **bcryptjs** | 3 | Password hashing |
+| **express-rate-limit** | 7 | API rate limiting & abuse prevention |
 | **Faker.js** | 10 | Realistic seed data generation |
 | **Nodemon** | 3 | Dev server hot-reload |
 | **dotenv** | 17 | Environment variable management |
@@ -90,6 +91,7 @@ This project demonstrates enterprise-grade patterns for a CRM system, including:
 - 🗄️ **Aggregation Pipeline** — Complex queries executed entirely at the database level
 - 📊 **placeholderData** — Seamless pagination transitions with no loading flicker
 - 🧠 **Memoization** — `useMemo` for columns and expensive computations
+- 🛡️ **Rate Limiting** — API protection against abuse (100 requests per 15 minutes per IP)
 
 ---
 
@@ -293,6 +295,14 @@ Result: **~10× faster query performance** on large datasets compared to full-co
 - Faster Time-to-Interactive (TTI)
 - Code split by route, loaded only when the user navigates to `/`
 
+### Rate Limiting
+Implemented using `express-rate-limit` middleware to:
+- Prevent API abuse and DDoS attacks
+- Limit each IP to 100 requests per 15-minute window
+- Protect database resources from excessive load
+- Provide clear error messages when limits are exceeded
+- Track rate limit status via standard HTTP headers
+
 ---
 
 ## ⚡ Performance Optimizations
@@ -307,6 +317,7 @@ Result: **~10× faster query performance** on large datasets compared to full-co
 | **placeholderData** | Seamless pagination with no loading flicker |
 | **Memoization** | `useMemo` for column definitions and expensive computations |
 | **Code Splitting** | Lazy-loaded `LeadsPage` reduces initial bundle by ~40% |
+| **Rate Limiting** | Protects API from abuse, limits to 100 requests/15min per IP |
 
 ---
 
