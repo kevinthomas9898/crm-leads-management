@@ -88,7 +88,7 @@ function DataTable<T>({
                 <tbody className="divide-y divide-gray-100">
                     {table
                         .getRowModel()
-                        .rows.map((row, index) => (
+                        .rows.map((row) => (
                             <tr
                                 key={row.id}
                                 className="hover:bg-blue-50 transition-colors duration-200"
