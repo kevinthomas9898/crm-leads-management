@@ -76,7 +76,13 @@ function LeadsPage({ selectedLead }: LeadsPageProps) {
     });
 
     if (isLoading && !data) {
-        return <h2>Loading leads...</h2>;
+        return (
+            <div className="flex flex-col items-center justify-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                <p className="text-lg font-medium text-gray-600">Loading leads...</p>
+                <p className="text-sm text-gray-500 mt-1">Please wait while we fetch your data</p>
+            </div>
+        );
     }
 
     if (error) {
