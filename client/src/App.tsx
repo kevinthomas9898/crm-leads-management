@@ -5,11 +5,12 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 
 import LoginPage from "./pages/LoginPage";
-import NotFoundPage from "./pages/NotFoundPage";
+  import NotFoundPage from "./pages/NotFoundPage";
 import RegisterPage from "./pages/RegisterPage";
+import ServerWakingUp from "./components/ServerWakingUp";
 
 import GlobalSearch from "./components/GlobalSearch";
 import Navbar from "./components/Navbar";
@@ -60,10 +61,54 @@ function PublicRoute({
 
 function App() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [serverReady, setServerReady] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+
+  useEffect(() => {
+    const checkServer = async () => {
+      const maxAttempts = 30; // 30 attempts
+      const delay = 2000; // 2 seconds between attempts
+      
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          const baseURL = import.meta.env.DEV 
+            ? "http://localhost:5000" 
+            : "https://crm-leads-management-server.onrender.com";
+          
+          const response = await fetch(`${baseURL}/`, { 
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache'
+          });
+          
+          if (response.ok) {
+            setServerReady(true);
+            setIsChecking(false);
+            return;
+          }
+        } catch {
+          // Server not ready yet, continue waiting
+        }
+        
+        // Wait before next attempt
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+      
+      // After max attempts, still proceed (server might have other issues)
+      setIsChecking(false);
+    };
+
+    checkServer();
+  }, []);
 
   const handleLeadSelect = (lead: Lead) => {
     setSelectedLead(lead);
   };
+
+  // Show waking up screen while checking server
+  if (isChecking && !serverReady) {
+    return <ServerWakingUp />;
+  }
 
   return (
     <BrowserRouter>
