@@ -29,8 +29,8 @@ function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 pt-20 overflow-y-auto">
-            <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 pt-24 pb-8 overflow-y-auto">
+            <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 my-auto">
                 {/* Logo/Brand */}
                 <div className="text-center lg:text-left lg:flex-1 lg:max-w-lg">
                     <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-4 lg:mb-6">CRM System</h1>
