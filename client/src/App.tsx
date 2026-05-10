@@ -61,15 +61,18 @@ function PublicRoute({
 
 function App() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [serverReady, setServerReady] = useState(false);
-  const [isChecking, setIsChecking] = useState(true);
+  const [serverWakingUp, setServerWakingUp] = useState(false);
 
   useEffect(() => {
-    const checkServer = async () => {
-      const maxAttempts = 30; // 30 attempts
-      const delay = 2000; // 2 seconds between attempts
-      
-      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    // Check if server was recently verified (within last 30 minutes)
+    const lastChecked = sessionStorage.getItem('serverChecked');
+    const THIRTY_MINUTES = 30 * 60 * 1000; // 30 minutes in milliseconds
+    
+    const shouldCheck = !lastChecked || (Date.now() - parseInt(lastChecked)) > THIRTY_MINUTES;
+    
+    if (shouldCheck) {
+      // Check server health
+      const checkServer = async () => {
         try {
           const baseURL = import.meta.env.DEV 
             ? "http://localhost:5000" 
@@ -82,32 +85,30 @@ function App() {
           });
           
           if (response.ok) {
-            setServerReady(true);
-            setIsChecking(false);
-            return;
+            sessionStorage.setItem('serverChecked', Date.now().toString());
           }
         } catch {
-          // Server not ready yet, continue waiting
+          // Server is sleeping - show waking up screen
+          setServerWakingUp(true);
         }
-        
-        // Wait before next attempt
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-      
-      // After max attempts, still proceed (server might have other issues)
-      setIsChecking(false);
-    };
+      };
 
-    checkServer();
+      checkServer();
+    }
   }, []);
 
   const handleLeadSelect = (lead: Lead) => {
     setSelectedLead(lead);
   };
 
-  // Show waking up screen while checking server
-  if (isChecking && !serverReady) {
-    return <ServerWakingUp />;
+  const handleServerReady = () => {
+    setServerWakingUp(false);
+    sessionStorage.setItem('serverChecked', 'true');
+  };
+
+  // Show waking up screen only when server is actually sleeping
+  if (serverWakingUp) {
+    return <ServerWakingUp onServerReady={handleServerReady} />;
   }
 
   return (

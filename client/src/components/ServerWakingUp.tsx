@@ -1,4 +1,45 @@
-function ServerWakingUp() {
+import { useEffect } from 'react';
+
+interface ServerWakingUpProps {
+  onServerReady?: () => void;
+}
+
+function ServerWakingUp({ onServerReady }: ServerWakingUpProps) {
+  useEffect(() => {
+    if (!onServerReady) return;
+
+    const checkServer = async () => {
+      const maxAttempts = 30;
+      const delay = 2000;
+      
+      const baseURL = import.meta.env.DEV 
+        ? "http://localhost:5000" 
+        : "https://crm-leads-management-server.onrender.com";
+      
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          const response = await fetch(`${baseURL}/`, { 
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache'
+          });
+          
+          if (response.ok) {
+            sessionStorage.setItem('serverChecked', Date.now().toString());
+            onServerReady();
+            return;
+          }
+        } catch {
+          // Server still waking up, continue waiting
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    };
+
+    checkServer();
+  }, [onServerReady]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 px-4">
       <div className="text-center max-w-md">
