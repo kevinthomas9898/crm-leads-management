@@ -6,7 +6,7 @@ A full-stack Customer Relationship Management (CRM) application built to handle 
 
 ## 🚀 Live Demo
 
-> Deploy the app and update this section with the live URL.
+https://crm-leads-management-ten.vercel.app/
 
 ---
 
