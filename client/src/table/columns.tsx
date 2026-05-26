@@ -2,7 +2,12 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import type { Lead } from "../types/lead";
 
-export const columns: ColumnDef<Lead>[] = [
+interface ColumnsProps {
+  onEdit: (lead: Lead) => void;
+  onDelete: (lead: Lead) => void;
+}
+
+export const columns = ({ onEdit, onDelete }: ColumnsProps): ColumnDef<Lead>[] => [
   {
     id: "name",
     accessorKey: "name",
@@ -42,6 +47,29 @@ export const columns: ColumnDef<Lead>[] = [
       return new Date(
         row.original.createdAt
       ).toLocaleDateString();
+    },
+  },
+
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <button
+            onClick={() => onEdit(row.original)}
+            className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => onDelete(row.original)}
+            className="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200"
+          >
+            Delete
+          </button>
+        </div>
+      );
     },
   },
 ];
