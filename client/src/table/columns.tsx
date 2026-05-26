@@ -58,13 +58,13 @@ export const columns = ({ onEdit, onDelete }: ColumnsProps): ColumnDef<Lead>[] =
         <div className="flex gap-2">
           <button
             onClick={() => onEdit(row.original)}
-            className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200"
+            className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
           >
             Edit
           </button>
           <button
             onClick={() => onDelete(row.original)}
-            className="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200"
+            className="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
           >
             Delete
           </button>

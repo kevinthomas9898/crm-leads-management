@@ -164,8 +164,8 @@ function LeadsPage({ selectedLead }: LeadsPageProps) {
             {/* Header Section */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Leads Management</h2>
-                    <p className="text-gray-500 text-sm mt-1">Manage and track your leads efficiently</p>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Leads Management</h2>
+                    <p className="text-gray-500 text-sm mt-1 dark:text-gray-400">Manage and track your leads efficiently</p>
                 </div>
                 <button
                     onClick={handleAddLead}
@@ -179,25 +179,25 @@ function LeadsPage({ selectedLead }: LeadsPageProps) {
             </div>
 
             {/* Filters Section */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
                 <div className="flex flex-col lg:flex-row gap-4">
                     {/* Search Input */}
                     <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">Search</label>
                         <input
                             type="text"
                             placeholder="Search by name, email, or company..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                         />
                     </div>
 
                     {/* Status Filter */}
                     <div className="lg:w-48">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">Status</label>
                         <select
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                             value={status}
                             onChange={(e) => setStatus(e.target.value)}
                         >
@@ -211,9 +211,9 @@ function LeadsPage({ selectedLead }: LeadsPageProps) {
 
                     {/* Owner Filter */}
                     <div className="lg:w-48">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Owner</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">Owner</label>
                         <select
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                             value={owner}
                             onChange={(e) => setOwner(e.target.value)}
                         >
@@ -228,7 +228,7 @@ function LeadsPage({ selectedLead }: LeadsPageProps) {
             </div>
 
             {/* Table Section */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                 <DataTable
                     columns={memoizedColumns}
                     data={data.data}
@@ -259,16 +259,16 @@ function LeadsPage({ selectedLead }: LeadsPageProps) {
 
             {/* Delete Confirmation Dialog */}
             {deleteConfirmLead && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
-                        <h3 className="text-xl font-bold text-gray-900 mb-4">Confirm Delete</h3>
-                        <p className="text-gray-600 mb-6">
+                <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 dark:bg-gray-800">
+                        <h3 className="text-xl font-bold text-gray-900 mb-4 dark:text-white">Confirm Delete</h3>
+                        <p className="text-gray-600 mb-6 dark:text-gray-300">
                             Are you sure you want to delete the lead "{deleteConfirmLead.name}"? This action cannot be undone.
                         </p>
                         <div className="flex gap-3">
                             <button
                                 onClick={handleDeleteCancel}
-                                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors duration-200"
+                                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors duration-200 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                             >
                                 Cancel
                             </button>

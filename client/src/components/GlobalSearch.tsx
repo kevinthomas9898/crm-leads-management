@@ -58,16 +58,16 @@ function GlobalSearch({ onLeadSelect }: GlobalSearchProps) {
         placeholder="Global Search..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="w-full max-w-md border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm"
+        className="w-full max-w-md border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
       />
 
       {query && (
-        <div 
-          className="absolute mt-2 w-full max-w-md bg-white border border-gray-200 rounded-lg shadow-xl z-10 overflow-hidden"
+        <div
+          className="absolute mt-2 w-full max-w-md bg-white border border-gray-200 rounded-lg shadow-xl z-10 overflow-hidden dark:bg-gray-800 dark:border-gray-700"
           style={{ maxHeight: "320px", overflowY: "auto" }}
         >
           {loading ? (
-            <div className="p-4 text-center text-gray-500">
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
               <p className="mt-2 text-sm">Searching...</p>
             </div>
@@ -76,23 +76,23 @@ function GlobalSearch({ onLeadSelect }: GlobalSearchProps) {
               <div
                 key={lead._id}
                 onClick={() => handleLeadClick(lead)}
-                className="p-4 border-b border-gray-100 last:border-b-0 hover:bg-blue-50 transition-colors duration-200 cursor-pointer"
+                className="p-4 border-b border-gray-100 last:border-b-0 hover:bg-blue-50 transition-colors duration-200 cursor-pointer dark:border-gray-700 dark:hover:bg-gray-700"
               >
-                <h3 className="font-semibold text-gray-900">{lead.name}</h3>
-                <p className="text-sm text-gray-600 mt-1">{lead.email}</p>
-                <p className="text-sm text-gray-500 mt-1">{lead.company}</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white">{lead.name}</h3>
+                <p className="text-sm text-gray-600 mt-1 dark:text-gray-300">{lead.email}</p>
+                <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">{lead.company}</p>
                 <div className="mt-2 flex gap-2">
-                  <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                  <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
                     {lead.status}
                   </span>
-                  <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                  <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                     {lead.owner}
                   </span>
                 </div>
               </div>
             ))
           ) : (
-            <div className="p-4 text-center text-gray-500">
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
               <p>No results found</p>
               <p className="text-sm mt-1">Try a different search term</p>
             </div>

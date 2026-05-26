@@ -92,17 +92,17 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">
+    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 dark:bg-gray-800">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             {lead ? "Edit Lead" : "Add New Lead"}
           </h2>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               Name *
             </label>
             <input
@@ -110,8 +110,8 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white ${
-                errors.name ? "border-red-500" : "border-gray-300"
+              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white ${
+                errors.name ? "border-red-500" : "border-gray-300 dark:border-gray-600"
               }`}
               placeholder="Enter lead name"
             />
@@ -121,7 +121,7 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               Email *
             </label>
             <input
@@ -129,8 +129,8 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white ${
-                errors.email ? "border-red-500" : "border-gray-300"
+              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white ${
+                errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-600"
               }`}
               placeholder="Enter email address"
             />
@@ -140,7 +140,7 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               Company *
             </label>
             <input
@@ -148,8 +148,8 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
               name="company"
               value={formData.company}
               onChange={handleChange}
-              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white ${
-                errors.company ? "border-red-500" : "border-gray-300"
+              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white ${
+                errors.company ? "border-red-500" : "border-gray-300 dark:border-gray-600"
               }`}
               placeholder="Enter company name"
             />
@@ -159,14 +159,14 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               Status
             </label>
             <select
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
               <option value="New">New</option>
               <option value="Contacted">Contacted</option>
@@ -176,15 +176,15 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               Owner *
             </label>
             <select
               name="owner"
               value={formData.owner}
               onChange={handleChange}
-              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white ${
-                errors.owner ? "border-red-500" : "border-gray-300"
+              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white ${
+                errors.owner ? "border-red-500" : "border-gray-300 dark:border-gray-600"
               }`}
             >
               <option value="">Select owner</option>
@@ -202,7 +202,7 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors duration-200"
+              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors duration-200 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               Cancel
             </button>

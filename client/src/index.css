@@ -1,5 +1,12 @@
 @import "tailwindcss";
-
+@theme {
+  --color-dark-bg: #111827;
+  --color-dark-card: #1f2937;
+  --color-dark-border: #374151;
+}
+ 
+/* Dark mode configuration - enable class strategy */
+@variant dark (&:where(.dark, .dark *));
 /* Custom Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 1px;
@@ -9,6 +16,10 @@
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 10px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -24,8 +35,16 @@
   background: #f1f1f1;
 }
 
+.dark ::-webkit-scrollbar-corner {
+  background: #1f2937;
+}
+
 /* Firefox scrollbar styling */
 * {
   scrollbar-width: thin;
   scrollbar-color: #60a5fa #f1f1f1;
+}
+
+.dark * {
+  scrollbar-color: #60a5fa #1f2937;
 }

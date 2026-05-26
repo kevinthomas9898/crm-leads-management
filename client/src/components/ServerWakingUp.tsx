@@ -41,11 +41,11 @@ function ServerWakingUp({ onServerReady }: ServerWakingUpProps) {
   }, [onServerReady]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 px-4 dark:from-gray-900 dark:to-gray-800">
       <div className="text-center max-w-md">
         {/* Animated Logo */}
         <div className="mb-8">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-2xl shadow-lg mb-6 animate-pulse">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-2xl shadow-lg mb-6 animate-pulse dark:bg-gray-800">
             <svg
               className="w-12 h-12 text-blue-600"
               fill="none"
@@ -63,12 +63,12 @@ function ServerWakingUp({ onServerReady }: ServerWakingUpProps) {
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4 dark:text-white">
           Server is waking up
         </h1>
 
         {/* Description */}
-        <p className="text-gray-600 mb-8 text-lg">
+        <p className="text-gray-600 mb-8 text-lg dark:text-gray-400">
           Our server is starting up. This may take up to 50 seconds. Please wait while we prepare everything for you.
         </p>
 
@@ -80,11 +80,11 @@ function ServerWakingUp({ onServerReady }: ServerWakingUpProps) {
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-white rounded-full h-2 mb-4 overflow-hidden shadow-inner">
+        <div className="w-full bg-white rounded-full h-2 mb-4 overflow-hidden shadow-inner dark:bg-gray-700">
           <div className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full animate-[width_2s_ease-in-out_infinite]" style={{ width: '60%' }}></div>
         </div>
 
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Powered by Render
         </p>
       </div>

@@ -137,13 +137,13 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 pt-28">
+              <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 pt-28 dark:from-gray-900 dark:to-gray-800">
                 <div className="max-w-7xl mx-auto">
                   <div className="mb-8">
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-300">
                       CRM Leads Management
                     </h1>
-                    <p className="text-gray-600 mt-2">
+                    <p className="text-gray-600 mt-2 dark:text-gray-400">
                       Track, manage, and convert your leads efficiently
                     </p>
                   </div>

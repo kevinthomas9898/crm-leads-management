@@ -5,13 +5,17 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
+
+import { useTheme } from "../contexts/ThemeContext";
 
 function Navbar() {
   const navigate = useNavigate();
 
   const [open, setOpen] =
     useState(false);
+
+  const { theme, toggleTheme } = useTheme();
 
   const token =
     localStorage.getItem("token");
@@ -28,7 +32,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm z-50 border-b border-gray-100">
+    <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm z-50 border-b border-gray-100 dark:bg-gray-900/80 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
 
         {/* Logo */}
@@ -41,6 +45,15 @@ function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-3">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+            aria-label="Toggle theme"
+          >
+            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+          </button>
+
           {token ? (
             <button
               onClick={handleLogout}
@@ -58,7 +71,7 @@ function Navbar() {
               </Link>
               <Link
                 to="/register"
-                className="bg-white border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+                className="bg-white border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
               >
                 Register
               </Link>
@@ -83,7 +96,16 @@ function Navbar() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden px-4 py-4 flex flex-col gap-3 bg-white border-t border-gray-100 shadow-lg">
+        <div className="md:hidden px-4 py-4 flex flex-col gap-3 bg-white border-t border-gray-100 shadow-lg dark:bg-gray-900 dark:border-gray-700">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="flex items-center justify-center gap-2 p-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+          >
+            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+            <span>{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
+          </button>
+
           {token ? (
             <button
               onClick={handleLogout}
@@ -103,7 +125,7 @@ function Navbar() {
               <Link
                 to="/register"
                 onClick={handleMenuClose}
-                className="bg-white border border-gray-300 text-gray-700 px-5 py-3 rounded-lg font-medium text-center hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+                className="bg-white border border-gray-300 text-gray-700 px-5 py-3 rounded-lg font-medium text-center hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
               >
                 Register
               </Link>
