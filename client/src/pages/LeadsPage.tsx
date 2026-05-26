@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchLeads } from "../api/leadApi";
 import { columns } from "../table/columns";
 import DataTable from "../components/DataTable";
+import Pagination from "../components/Pagination";
 import { useMemo } from "react";
 import type { Lead } from "../types/lead";
 
@@ -161,30 +162,14 @@ function LeadsPage({ selectedLead }: LeadsPageProps) {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-200 px-6 py-4">
-                <div className="text-sm text-gray-600">
-                    Showing <span className="font-semibold">{((page - 1) * limit) + 1}</span> to <span className="font-semibold">{Math.min(page * limit, data.total)}</span> of <span className="font-semibold">{data.total}</span> leads
-                </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                        disabled={page === 1}
-                        className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed transition-all duration-200 font-medium"
-                    >
-                        Previous
-                    </button>
-                    <div className="px-4 py-2 text-gray-700 font-medium">
-                        Page <span className="text-blue-600">{page}</span> of <span className="text-blue-600">{data.totalPages}</span>
-                    </div>
-                    <button
-                        onClick={() => setPage((prev) => prev < data.totalPages ? prev + 1 : prev)}
-                        disabled={page === data.totalPages}
-                        className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed transition-all duration-200 font-medium"
-                    >
-                        Next
-                    </button>
-                </div>
-            </div>
+            <Pagination
+                currentPage={page}
+                totalPages={data.totalPages}
+                total={data.total}
+                limit={limit}
+                onPageChange={setPage}
+                debounceMs={300}
+            />
         </div>
     );
 }
