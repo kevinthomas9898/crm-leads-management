@@ -8,6 +8,7 @@ import {
 import { lazy, Suspense, useState, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Analytics } from "@vercel/analytics/react";
 
 import LoginPage from "./pages/LoginPage";
   import NotFoundPage from "./pages/NotFoundPage";
@@ -175,6 +176,7 @@ function App() {
           element={<NotFoundPage />}
         />
       </Routes>
+      <Analytics />
     </BrowserRouter>
   );
 }
