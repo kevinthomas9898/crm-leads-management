@@ -1,4 +1,5 @@
 import api from "./axios";
+import { toast } from "react-toastify";
 
 interface FetchLeadsParams {
   page?: number;
@@ -27,8 +28,14 @@ export const createLead = async (leadData: {
   status?: string;
   owner: string;
 }) => {
-  const response = await api.post("/leads", leadData);
-  return response.data;
+  try {
+    const response = await api.post("/leads", leadData);
+    toast.success("Lead created successfully!");
+    return response.data;
+  } catch (error: any) {
+    toast.error(error.response?.data?.message || "Failed to create lead.");
+    throw error;
+  }
 };
 
 export const updateLead = async (
@@ -41,11 +48,23 @@ export const updateLead = async (
     owner?: string;
   }
 ) => {
-  const response = await api.put(`/leads/${id}`, leadData);
-  return response.data;
+  try {
+    const response = await api.put(`/leads/${id}`, leadData);
+    toast.success("Lead updated successfully!");
+    return response.data;
+  } catch (error: any) {
+    toast.error(error.response?.data?.message || "Failed to update lead.");
+    throw error;
+  }
 };
 
 export const deleteLead = async (id: string) => {
-  const response = await api.delete(`/leads/${id}`);
-  return response.data;
+  try {
+    const response = await api.delete(`/leads/${id}`);
+    toast.success("Lead deleted successfully!");
+    return response.data;
+  } catch (error: any) {
+    toast.error(error.response?.data?.message || "Failed to delete lead.");
+    throw error;
+  }
 };

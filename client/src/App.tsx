@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 
 import { lazy, Suspense, useState, useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import LoginPage from "./pages/LoginPage";
   import NotFoundPage from "./pages/NotFoundPage";
@@ -114,6 +116,13 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        theme="dark"
+        toastClassName="!bg-gray-800 !text-white !rounded-lg !shadow-lg !border !border-gray-700"
+        progressClassName="!bg-blue-500"
+      />
       <Navbar />
       <Routes>
         <Route

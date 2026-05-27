@@ -1,4 +1,5 @@
 import api from "./axios";
+import { toast } from "react-toastify";
 
 interface LoginData {
   email: string;
@@ -12,11 +13,23 @@ interface RegisterData {
 }
 
 export const loginUser = async (data: LoginData) => {
-  const response = await api.post("/auth/login", data);
-  return response.data;
+  try {
+    const response = await api.post("/auth/login", data);
+    toast.success("Login successful!");
+    return response.data;
+  } catch (error: any) {
+    toast.error(error.response?.data?.message || "Login failed. Please check your credentials.");
+    throw error;
+  }
 };
 
 export const registerUser = async (data: RegisterData) => {
-  const response = await api.post("/auth/register", data);
-  return response.data;
+  try {
+    const response = await api.post("/auth/register", data);
+    toast.success("Registration successful! Please login.");
+    return response.data;
+  } catch (error: any) {
+    toast.error(error.response?.data?.message || "Registration failed. Please try again.");
+    throw error;
+  }
 };
