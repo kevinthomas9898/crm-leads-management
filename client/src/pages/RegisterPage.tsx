@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { registerUser } from "../api/authApi";
+import TextInput from "../components/TextInput";
 
 interface RegisterFormData {
   name: string;
@@ -52,52 +53,31 @@ function RegisterPage() {
           )}
 
           <div className="space-y-5">
-            <Controller
+            <TextInput
               name="name"
               control={control}
-              render={({ field }) => (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">Full Name</label>
-                  <input
-                    {...field}
-                    type="text"
-                    placeholder="John Doe"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
-                  />
-                </div>
-              )}
+              label="Full Name"
+              type="text"
+              placeholder="John Doe"
+              error={errors.name}
             />
 
-            <Controller
+            <TextInput
               name="email"
               control={control}
-              render={({ field }) => (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">Email Address</label>
-                  <input
-                    {...field}
-                    type="email"
-                    placeholder="you@example.com"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
-                  />
-                </div>
-              )}
+              label="Email Address"
+              type="email"
+              placeholder="you@example.com"
+              error={errors.email}
             />
 
-            <Controller
+            <TextInput
               name="password"
               control={control}
-              render={({ field }) => (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">Password</label>
-                  <input
-                    {...field}
-                    type="password"
-                    placeholder="••••••••"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
-                  />
-                </div>
-              )}
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+              error={errors.password}
             />
 
             <button

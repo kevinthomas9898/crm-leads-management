@@ -1,37 +1,35 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 import { globalSearch } from "../api/leadApi";
 
 import type { Lead } from "../types/lead";
+import TextInput from "./TextInput";
 
 interface GlobalSearchProps {
   onLeadSelect?: (lead: Lead) => void;
 }
 
 function GlobalSearch({ onLeadSelect }: GlobalSearchProps) {
-  const [query, setQuery] = useState("");
+  const { control, watch, reset } = useForm<{ query: string }>({
+    defaultValues: { query: "" },
+  });
 
-  const [results, setResults] = useState<
-    Lead[]
-  >([]);
+  const [results, setResults] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const [loading, setLoading] =
-    useState(false);
+  const query = watch("query");
 
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
-
       return;
     }
 
     const timeout = setTimeout(async () => {
       try {
         setLoading(true);
-
-        const data =
-          await globalSearch(query);
-
+        const data = await globalSearch(query);
         setResults(data);
       } catch (error) {
         console.log(error);
@@ -44,7 +42,7 @@ function GlobalSearch({ onLeadSelect }: GlobalSearchProps) {
   }, [query]);
 
   const handleLeadClick = (lead: Lead) => {
-    setQuery("");
+    reset({ query: "" });
     setResults([]);
     if (onLeadSelect) {
       onLeadSelect(lead);
@@ -53,12 +51,12 @@ function GlobalSearch({ onLeadSelect }: GlobalSearchProps) {
 
   return (
     <div className="mb-6 relative">
-      <input
+      <TextInput
+        name="query"
+        control={control}
+        label=""
         type="text"
         placeholder="Global Search..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="w-full max-w-md border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
       />
 
       {query && (

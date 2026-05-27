@@ -51,6 +51,8 @@ function DataTable<T>({
                                             onClick={() => {
                                                 const column = header.column.id;
 
+                                                if (column === "actions") return;
+
                                                 if (
                                                     sortBy === column
                                                 ) {
@@ -65,7 +67,11 @@ function DataTable<T>({
                                                     setSortOrder("asc");
                                                 }
                                             }}
-                                            className="px-6 py-4 text-left text-sm font-semibold text-gray-700 cursor-pointer select-none hover:bg-gray-200 transition-colors duration-200 first:rounded-tl-xl last:rounded-tr-xl dark:text-gray-200 dark:hover:bg-gray-600"
+                                            className={`px-6 py-4 text-left text-sm font-semibold text-gray-700 transition-colors duration-200 first:rounded-tl-xl last:rounded-tr-xl dark:text-gray-200 ${
+                                                header.column.id === "actions"
+                                                    ? ""
+                                                    : "cursor-pointer select-none hover:bg-gray-200 dark:hover:bg-gray-600"
+                                            }`}
                                         >
                                             <div className="flex items-center gap-2">
                                                 {flexRender(

@@ -37,7 +37,7 @@ app.use("/api", limiter);
 
 
 // Auth Routes
-app.use("/api/auth",authRoutes);
+app.use("/api/auth", authRoutes);
 
 // Test Route
 app.get("/", (req, res) => {

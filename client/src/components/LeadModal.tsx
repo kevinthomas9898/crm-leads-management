@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import type { Lead } from "../types/lead";
+import TextInput from "./TextInput";
+import Select from "./Select";
 
 interface LeadModalProps {
   isOpen: boolean;
@@ -15,19 +18,25 @@ interface LeadModalProps {
 }
 
 const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    company: "",
-    status: "New",
-    owner: "",
+  const { control, handleSubmit, formState: { errors }, reset } = useForm<{
+    name: string;
+    email: string;
+    company: string;
+    status: string;
+    owner: string;
+  }>({
+    defaultValues: {
+      name: "",
+      email: "",
+      company: "",
+      status: "New",
+      owner: "",
+    },
   });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (lead) {
-      setFormData({
+      reset({
         name: lead.name,
         email: lead.email,
         company: lead.company,
@@ -35,7 +44,7 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
         owner: lead.owner,
       });
     } else {
-      setFormData({
+      reset({
         name: "",
         email: "",
         company: "",
@@ -43,50 +52,16 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
         owner: "",
       });
     }
-    setErrors({});
-  }, [lead, isOpen]);
+  }, [lead, isOpen, reset]);
 
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    if (!formData.company.trim()) {
-      newErrors.company = "Company is required";
-    }
-
-    if (!formData.owner.trim()) {
-      newErrors.owner = "Owner is required";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validate()) {
-      onSubmit(formData);
-    }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error for this field when user starts typing
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
+  const onFormSubmit = (data: {
+    name: string;
+    email: string;
+    company: string;
+    status: string;
+    owner: string;
+  }) => {
+    onSubmit(data);
   };
 
   if (!isOpen) return null;
@@ -100,103 +75,59 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
           </h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-              Name *
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white ${
-                errors.name ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-              }`}
-              placeholder="Enter lead name"
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-            )}
-          </div>
+        <form onSubmit={handleSubmit(onFormSubmit)} className="p-6 space-y-4">
+          <TextInput
+            name="name"
+            control={control}
+            label="Name *"
+            type="text"
+            placeholder="Enter lead name"
+            error={errors.name}
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-              Email *
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white ${
-                errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-              }`}
-              placeholder="Enter email address"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
-          </div>
+          <TextInput
+            name="email"
+            control={control}
+            label="Email *"
+            type="email"
+            placeholder="Enter email address"
+            error={errors.email}
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-              Company *
-            </label>
-            <input
-              type="text"
-              name="company"
-              value={formData.company}
-              onChange={handleChange}
-              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white ${
-                errors.company ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-              }`}
-              placeholder="Enter company name"
-            />
-            {errors.company && (
-              <p className="text-red-500 text-sm mt-1">{errors.company}</p>
-            )}
-          </div>
+          <TextInput
+            name="company"
+            control={control}
+            label="Company *"
+            type="text"
+            placeholder="Enter company name"
+            error={errors.company}
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-              Status
-            </label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            >
-              <option value="New">New</option>
-              <option value="Contacted">Contacted</option>
-              <option value="Qualified">Qualified</option>
-              <option value="Lost">Lost</option>
-            </select>
-          </div>
+          <Select
+            name="status"
+            control={control}
+            label="Status"
+            options={[
+              { value: "New", label: "New" },
+              { value: "Contacted", label: "Contacted" },
+              { value: "Qualified", label: "Qualified" },
+              { value: "Lost", label: "Lost" },
+            ]}
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-              Owner *
-            </label>
-            <select
-              name="owner"
-              value={formData.owner}
-              onChange={handleChange}
-              className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white ${
-                errors.owner ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-              }`}
-            >
-              <option value="">Select owner</option>
-              <option value="Kevin">Kevin</option>
-              <option value="John">John</option>
-              <option value="Sarah">Sarah</option>
-              <option value="Mike">Mike</option>
-            </select>
-            {errors.owner && (
-              <p className="text-red-500 text-sm mt-1">{errors.owner}</p>
-            )}
-          </div>
+          <Select
+            name="owner"
+            control={control}
+            label="Owner *"
+            options={[
+              { value: "Kevin", label: "Kevin" },
+              { value: "John", label: "John" },
+              { value: "Sarah", label: "Sarah" },
+              { value: "Mike", label: "Mike" },
+            ]}
+            placeholder="Select owner"
+            error={errors.owner}
+          />
 
           <div className="flex gap-3 pt-4">
             <button

@@ -14,6 +14,7 @@ import ServerWakingUp from "./components/ServerWakingUp";
 
 import GlobalSearch from "./components/GlobalSearch";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 import type { Lead } from "./types/lead";
 
@@ -137,7 +138,7 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 pt-28 dark:from-gray-900 dark:to-gray-800">
+              <div className="min-h-screen bg-gradient-to-br pb-8 from-gray-50 to-gray-100 p-6 pt-28 dark:from-gray-900 dark:to-gray-800">
                 <div className="max-w-7xl mx-auto">
                   <div className="mb-8">
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-300">
@@ -155,6 +156,7 @@ function App() {
                   </Suspense>
                 </div>
               </div>
+              <Footer />
             </ProtectedRoute>
           }
         />
