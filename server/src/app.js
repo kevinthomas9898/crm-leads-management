@@ -14,6 +14,16 @@ const authRoutes = require("./routes/authRoutes");
 // Config
 dotenv.config();
 
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err);
+});
+
 // Connect MongoDB
 connectDB();
 
@@ -44,6 +54,11 @@ app.get("/", (req, res) => {
   res.send("API Running");
 });
 
+// Health check endpoint for Render
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "Server is healthy" });
+});
+
 // API Routes
 app.use("/api/leads", leadRoutes);
 
@@ -52,6 +67,11 @@ app.use("/api/search", searchRoutes);
 // Server
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+// Keep server alive
+server.on('error', (err) => {
+  console.error('Server error:', err);
 });
