@@ -18,7 +18,6 @@ export const loginUser = async (data: LoginData) => {
     toast.success("Login successful!");
     return response.data;
   } catch (error: any) {
-    toast.error(error.response?.data?.message || "Login failed. Please check your credentials.");
     throw error;
   }
 };
@@ -29,7 +28,6 @@ export const registerUser = async (data: RegisterData) => {
     toast.success("Registration successful! Please login.");
     return response.data;
   } catch (error: any) {
-    toast.error(error.response?.data?.message || "Registration failed. Please try again.");
     throw error;
   }
 };

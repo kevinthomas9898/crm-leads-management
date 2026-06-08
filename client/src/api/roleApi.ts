@@ -27,7 +27,6 @@ export const createRole = async (roleData: {
     toast.success("Role created successfully!");
     return response.data;
   } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to create role.");
     throw error;
   }
 };
@@ -45,7 +44,6 @@ export const updateRole = async (
     toast.success("Role updated successfully!");
     return response.data;
   } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to update role.");
     throw error;
   }
 };
@@ -56,7 +54,6 @@ export const deleteRole = async (id: string) => {
     toast.success("Role deleted successfully!");
     return response.data;
   } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to delete role.");
     throw error;
   }
 };

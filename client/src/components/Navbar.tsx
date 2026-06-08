@@ -45,6 +45,7 @@ function Navbar() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setOpen(false);
+    setProfileOpen(!profileOpen);
     navigate("/login");
   };
 

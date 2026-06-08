@@ -28,7 +28,6 @@ export const createUser = async (userData: {
     toast.success("User created successfully!");
     return response.data;
   } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to create user.");
     throw error;
   }
 };
@@ -47,7 +46,6 @@ export const updateUser = async (
     toast.success("User updated successfully!");
     return response.data;
   } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to update user.");
     throw error;
   }
 };
@@ -58,7 +56,6 @@ export const deleteUser = async (id: string) => {
     toast.success("User deleted successfully!");
     return response.data;
   } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to delete user.");
     throw error;
   }
 };

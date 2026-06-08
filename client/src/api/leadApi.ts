@@ -33,7 +33,6 @@ export const createLead = async (leadData: {
     toast.success("Lead created successfully!");
     return response.data;
   } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to create lead.");
     throw error;
   }
 };
@@ -53,7 +52,6 @@ export const updateLead = async (
     toast.success("Lead updated successfully!");
     return response.data;
   } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to update lead.");
     throw error;
   }
 };
@@ -64,7 +62,6 @@ export const deleteLead = async (id: string) => {
     toast.success("Lead deleted successfully!");
     return response.data;
   } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to delete lead.");
     throw error;
   }
 };
