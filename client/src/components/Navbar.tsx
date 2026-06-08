@@ -10,7 +10,6 @@ import {
   X,
   Sun,
   Moon,
-  User,
   ChevronDown,
 } from "lucide-react";
 import { useTheme } from "next-themes";
