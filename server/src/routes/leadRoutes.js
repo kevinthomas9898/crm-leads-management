@@ -8,12 +8,12 @@ const { protect, authorize } = require("../middleware/authMiddleware");
 // All routes require authentication
 router.use(protect);
 
-// GET is available to all authenticated users
-router.get("/", getLeads);
+// GET is available to users with read_lead permission
+router.get("/", authorize("read_lead"), getLeads);
 
-// POST, PUT, DELETE require admin role
-router.post("/", authorize("admin"), createLead);
-router.put("/:id", authorize("admin"), updateLead);
-router.delete("/:id", authorize("admin"), deleteLead);
+// POST, PUT, DELETE require specific permissions
+router.post("/", authorize("create_lead"), createLead);
+router.put("/:id", authorize("update_lead"), updateLead);
+router.delete("/:id", authorize("delete_lead"), deleteLead);
 
 module.exports = router;

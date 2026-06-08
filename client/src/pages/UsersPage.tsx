@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { fetchUsers, createUser, updateUser, deleteUser } from "../api/userApi";
+import { fetchRoles } from "../api/roleApi";
 import DataTable from "../components/DataTable";
 import Dialog from "../components/Dialog";
 import TextInput from "../components/TextInput";
@@ -58,6 +59,17 @@ function UsersPage() {
     queryFn: () => fetchUsers({ page, limit: 10, search: debouncedSearch, sortBy, sortOrder }),
     placeholderData: (previousData) => previousData,
   });
+
+  const { data: rolesData } = useQuery({
+    queryKey: ["roles"],
+    queryFn: () => fetchRoles({ page: 1, limit: 100 }),
+  });
+
+  // Transform roles data for Select component
+  const roleOptions = rolesData?.roles?.map((role: any) => ({
+    value: role.name,
+    label: role.name.charAt(0).toUpperCase() + role.name.slice(1),
+  })) || [];
 
   const createMutation = useMutation({
     mutationFn: createUser,
@@ -271,10 +283,7 @@ function UsersPage() {
             name="role"
             control={createForm.control}
             label="Role"
-            options={[
-              { value: "user", label: "User" },
-              { value: "admin", label: "Admin" },
-            ]}
+            options={roleOptions}
           />
           <div className="flex gap-3 pt-4">
             <button
@@ -323,10 +332,7 @@ function UsersPage() {
             name="role"
             control={editForm.control}
             label="Role"
-            options={[
-              { value: "user", label: "User" },
-              { value: "admin", label: "Admin" },
-            ]}
+            options={roleOptions}
           />
           <div className="flex gap-3 pt-4">
             <button

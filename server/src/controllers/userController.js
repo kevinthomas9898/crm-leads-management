@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Role = require("../models/Role");
+const bcrypt = require("bcryptjs");
 
 const getUsers = async (req, res) => {
   try {
@@ -59,7 +60,26 @@ const getUserById = async (req, res) => {
 const createUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
-    const user = await User.create({ name, email, password, role: role || "user" });
+
+    // Look up the Role by name (default to "user" if not provided)
+    const roleName = role || "user";
+    const roleDoc = await Role.findOne({ name: roleName });
+    
+    if (!roleDoc) {
+      return res.status(400).json({ message: `Role "${roleName}" not found` });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user with role ObjectId and hashed password
+    const user = await User.create({ 
+      name, 
+      email, 
+      password: hashedPassword, 
+      role: roleDoc._id 
+    });
+    
     res.status(201).json({ message: "User created successfully", user });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
@@ -69,11 +89,30 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
+    
+    // Build update object dynamically
+    const updateData = { name, email };
+    
+    // Hash password if provided
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+    
+    // Look up Role by name if provided
+    if (role) {
+      const roleDoc = await Role.findOne({ name: role });
+      if (!roleDoc) {
+        return res.status(400).json({ message: `Role "${role}" not found` });
+      }
+      updateData.role = roleDoc._id;
+    }
+    
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { name, email, password, role },
+      updateData,
       { new: true, runValidators: true }
     ).select("-password");
+    
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

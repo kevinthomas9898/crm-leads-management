@@ -24,11 +24,15 @@ const registerUser = async (req, res) => {
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Get default role (user)
+        const defaultRole = await Role.findOne({ name: "user" });
+
         // Create user
         const user = await User.create({
             name,
             email,
             password: hashedPassword,
+            role: defaultRole ? defaultRole._id : null,
         });
 
         // Send response
@@ -80,14 +84,15 @@ const loginUser = async (req, res) => {
             });
         }
 
-        // Get role name (handle both string and object)
-        const roleName = user.role && typeof user.role === 'object' ? user.role.name : user.role;
+        // Get role permissions
+        const permissions = user.role && typeof user.role === 'object' ? user.role.permissions : [];
 
         // Generate JWT token
         const token = jwt.sign(
             {
                 id: user._id,
-                role: roleName,
+                role: user.role && typeof user.role === 'object' ? user.role.name : user.role,
+                permissions: permissions,
             },
 
             process.env.JWT_SECRET,

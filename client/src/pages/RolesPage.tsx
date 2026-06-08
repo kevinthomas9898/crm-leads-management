@@ -258,7 +258,7 @@ function RolesPage() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Permissions</label>
             <div className="flex flex-wrap gap-2">
-              {["read", "write", "delete", "admin"].map((perm) => (
+              {["create_lead", "read_lead", "update_lead", "delete_lead", "manage_users", "manage_roles"].map((perm) => (
                 <label key={perm} className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -317,7 +317,7 @@ function RolesPage() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Permissions</label>
             <div className="flex flex-wrap gap-2">
-              {["read", "write", "delete", "admin"].map((perm) => (
+              {["create_lead", "read_lead", "update_lead", "delete_lead", "manage_users", "manage_roles"].map((perm) => (
                 <label key={perm} className="flex items-center gap-2">
                   <input
                     type="checkbox"

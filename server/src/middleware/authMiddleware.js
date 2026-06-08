@@ -43,7 +43,7 @@ const protect = (
   }
 };
 
-const authorize = (...roles) => {
+const authorize = (...permissions) => {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
@@ -51,7 +51,11 @@ const authorize = (...roles) => {
       });
     }
 
-    if (!roles.includes(req.user.role)) {
+    // Check if user has the required permissions
+    const userPermissions = req.user.permissions || [];
+    const hasPermission = permissions.every(perm => userPermissions.includes(perm));
+
+    if (!hasPermission) {
       return res.status(403).json({
         message: "Not authorized to access this resource"
       });

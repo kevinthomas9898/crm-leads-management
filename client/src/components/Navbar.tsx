@@ -21,10 +21,15 @@ function Navbar() {
   
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
-  const isAdmin = user && user.role && (
-    (typeof user.role === 'object' && user.role.name === 'admin') ||
-    (typeof user.role === 'string' && user.role === 'admin')
-  );
+
+  const hasPermission = (permission: string) => {
+    if (!user || !user.role) return false;
+    const permissions = typeof user.role === 'object' ? user.role.permissions : [];
+    return permissions.includes(permission);
+  };
+
+  const canManageUsers = hasPermission('manage_users');
+  const canManageRoles = hasPermission('manage_roles');
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -55,20 +60,24 @@ function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-3">
-          {token && isAdmin && (
+          {token && (canManageUsers || canManageRoles) && (
             <>
-              <Link
-                to="/users"
-                className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                Users
-              </Link>
-              <Link
-                to="/roles"
-                className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                Roles
-              </Link>
+              {canManageUsers && (
+                <Link
+                  to="/users"
+                  className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  Users
+                </Link>
+              )}
+              {canManageRoles && (
+                <Link
+                  to="/roles"
+                  className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  Roles
+                </Link>
+              )}
             </>
           )}
 
@@ -124,22 +133,26 @@ function Navbar() {
       {/* Mobile Menu */}
       {open && (
         <div className="md:hidden px-4 py-4 flex flex-col gap-3 bg-white border-t border-gray-100 shadow-lg dark:bg-gray-900 dark:border-gray-700">
-          {token && isAdmin && (
+          {token && (canManageUsers || canManageRoles) && (
             <>
-              <Link
-                to="/users"
-                onClick={handleMenuClose}
-                className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                Users
-              </Link>
-              <Link
-                to="/roles"
-                onClick={handleMenuClose}
-                className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                Roles
-              </Link>
+              {canManageUsers && (
+                <Link
+                  to="/users"
+                  onClick={handleMenuClose}
+                  className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  Users
+                </Link>
+              )}
+              {canManageRoles && (
+                <Link
+                  to="/roles"
+                  onClick={handleMenuClose}
+                  className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  Roles
+                </Link>
+              )}
             </>
           )}
 
