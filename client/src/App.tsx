@@ -25,6 +25,14 @@ const LeadsPage = lazy(
   () => import("./pages/LeadsPage")
 );
 
+const UsersPage = lazy(
+  () => import("./pages/UsersPage")
+);
+
+const RolesPage = lazy(
+  () => import("./pages/RolesPage")
+);
+
 function ProtectedRoute({
   children,
 }: {
@@ -163,6 +171,38 @@ function App() {
 
                   <Suspense >
                     <LeadsPage selectedLead={selectedLead} />
+                  </Suspense>
+                </div>
+              </div>
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <div className="min-h-screen bg-gradient-to-br pb-8 from-gray-50 to-gray-100 p-6 pt-28 dark:from-gray-900 dark:to-gray-800">
+                <div className="max-w-7xl mx-auto">
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <UsersPage />
+                  </Suspense>
+                </div>
+              </div>
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/roles"
+          element={
+            <ProtectedRoute>
+              <div className="min-h-screen bg-gradient-to-br pb-8 from-gray-50 to-gray-100 p-6 pt-28 dark:from-gray-900 dark:to-gray-800">
+                <div className="max-w-7xl mx-auto">
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <RolesPage />
                   </Suspense>
                 </div>
               </div>

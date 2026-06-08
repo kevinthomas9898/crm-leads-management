@@ -4,7 +4,7 @@ import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import App from "./App";
-import { ThemeProvider } from "./contexts/ThemeContext";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -16,10 +16,10 @@ const queryClient = new QueryClient({
 });
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
-        <ThemeProvider>
-            <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+            <ThemeProvider attribute="class" defaultTheme="system">
                 <App />
-            </QueryClientProvider>
-        </ThemeProvider>
+            </ThemeProvider>
+        </QueryClientProvider>
     </React.StrictMode>
 );

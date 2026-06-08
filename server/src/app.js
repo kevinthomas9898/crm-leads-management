@@ -10,6 +10,8 @@ const connectDB = require("./config/db");
 const leadRoutes = require("./routes/leadRoutes");
 const searchRoutes = require("./routes/searchRoutes");
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const roleRoutes = require("./routes/roleRoutes");
 
 // Config
 dotenv.config();
@@ -61,8 +63,9 @@ app.get("/health", (req, res) => {
 
 // API Routes
 app.use("/api/leads", leadRoutes);
-
 app.use("/api/search", searchRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/roles", roleRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;

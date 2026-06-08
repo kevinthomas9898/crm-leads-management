@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
+const Role = require("../models/Role");
 
 
 // ==============================
@@ -58,8 +59,8 @@ const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Find user
-        const user = await User.findOne({ email });
+        // Find user and populate role
+        const user = await User.findOne({ email }).populate("role");
 
         if (!user) {
             return res.status(400).json({
@@ -79,11 +80,14 @@ const loginUser = async (req, res) => {
             });
         }
 
+        // Get role name (handle both string and object)
+        const roleName = user.role && typeof user.role === 'object' ? user.role.name : user.role;
+
         // Generate JWT token
         const token = jwt.sign(
             {
                 id: user._id,
-                role: user.role,
+                role: roleName,
             },
 
             process.env.JWT_SECRET,

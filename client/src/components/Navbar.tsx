@@ -6,8 +6,7 @@ import {
 } from "react-router-dom";
 
 import { Menu, X, Sun, Moon } from "lucide-react";
-
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "next-themes";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -15,10 +14,17 @@ function Navbar() {
   const [open, setOpen] =
     useState(false);
 
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   const token =
     localStorage.getItem("token");
+  
+  const userStr = localStorage.getItem("user");
+  const user = userStr ? JSON.parse(userStr) : null;
+  const isAdmin = user && user.role && (
+    (typeof user.role === 'object' && user.role.name === 'admin') ||
+    (typeof user.role === 'string' && user.role === 'admin')
+  );
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -29,6 +35,10 @@ function Navbar() {
 
   const handleMenuClose = () => {
     setOpen(false);
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
@@ -45,6 +55,23 @@ function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-3">
+          {token && isAdmin && (
+            <>
+              <Link
+                to="/users"
+                className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                Users
+              </Link>
+              <Link
+                to="/roles"
+                className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                Roles
+              </Link>
+            </>
+          )}
+
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
@@ -97,6 +124,25 @@ function Navbar() {
       {/* Mobile Menu */}
       {open && (
         <div className="md:hidden px-4 py-4 flex flex-col gap-3 bg-white border-t border-gray-100 shadow-lg dark:bg-gray-900 dark:border-gray-700">
+          {token && isAdmin && (
+            <>
+              <Link
+                to="/users"
+                onClick={handleMenuClose}
+                className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                Users
+              </Link>
+              <Link
+                to="/roles"
+                onClick={handleMenuClose}
+                className="px-4 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-all duration-200 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                Roles
+              </Link>
+            </>
+          )}
+
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}

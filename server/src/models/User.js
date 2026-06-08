@@ -20,9 +20,9 @@ const userSchema =
       },
 
       role: {
-        type: String,
-        enum: ["admin", "user"],
-        default: "user",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Role",
+        default: null,
       },
     },
     {
