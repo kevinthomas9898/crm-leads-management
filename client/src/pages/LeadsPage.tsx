@@ -7,6 +7,8 @@ import Pagination from "../components/Pagination";
 import LeadModal from "../components/LeadModal";
 import { useMemo } from "react";
 import type { Lead } from "../types/lead";
+import { PERMISSIONS } from "../constants/permissions";
+import { hasPermission } from "../utils/auth";
 
 interface LeadsPageProps {
     selectedLead: Lead | null;
@@ -16,15 +18,9 @@ function LeadsPage({ selectedLead }: LeadsPageProps) {
     const userStr = localStorage.getItem("user");
     const user = userStr ? JSON.parse(userStr) : null;
 
-    const hasPermission = (permission: string) => {
-        if (!user || !user.role) return false;
-        const permissions = typeof user.role === 'object' ? user.role.permissions : [];
-        return permissions.includes(permission);
-    };
-
-    const canCreateLead = hasPermission('create_lead');
-    const canUpdateLead = hasPermission('update_lead');
-    const canDeleteLead = hasPermission('delete_lead');
+    const canCreateLead = hasPermission(PERMISSIONS.CREATE_LEAD, user);
+    const canUpdateLead = hasPermission(PERMISSIONS.UPDATE_LEAD, user);
+    const canDeleteLead = hasPermission(PERMISSIONS.DELETE_LEAD, user);
 
     const [page, setPage] = useState(1);
 

@@ -13,6 +13,8 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { PERMISSIONS } from "../constants/permissions";
+import { hasPermission } from "../utils/auth";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -27,19 +29,8 @@ function Navbar() {
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
 
-  const hasPermission = (permission: string) => {
-    if (!user || !user.role) return false;
-
-    const permissions =
-      typeof user.role === "object"
-        ? user.role.permissions || []
-        : [];
-
-    return permissions.includes(permission);
-  };
-
-  const canManageUsers = hasPermission("manage_users");
-  const canManageRoles = hasPermission("manage_roles");
+  const canManageUsers = hasPermission(PERMISSIONS.READ_USER, user);
+  const canManageRoles = hasPermission(PERMISSIONS.READ_ROLE, user);
 
   const handleLogout = () => {
     localStorage.removeItem("token");

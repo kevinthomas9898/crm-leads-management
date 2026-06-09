@@ -7,6 +7,7 @@ import Dialog from "../components/Dialog";
 import TextInput from "../components/TextInput";
 import Pagination from "../components/Pagination";
 import type { Role, CreateRoleData, UpdateRoleData } from "../types/role";
+import { ALL_PERMISSIONS } from "../constants/permissions";
 
 function RolesPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -258,7 +259,7 @@ function RolesPage() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Permissions</label>
             <div className="flex flex-wrap gap-2">
-              {["create_lead", "read_lead", "update_lead", "delete_lead", "manage_users", "manage_roles"].map((perm) => (
+              {ALL_PERMISSIONS.map((perm) => (
                 <label key={perm} className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -317,7 +318,7 @@ function RolesPage() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Permissions</label>
             <div className="flex flex-wrap gap-2">
-              {["create_lead", "read_lead", "update_lead", "delete_lead", "manage_users", "manage_roles"].map((perm) => (
+              {ALL_PERMISSIONS.map((perm) => (
                 <label key={perm} className="flex items-center gap-2">
                   <input
                     type="checkbox"

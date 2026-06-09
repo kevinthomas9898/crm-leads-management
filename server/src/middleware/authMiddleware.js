@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { expandPermissions } = require("../config/permissions");
 
 const protect = (
   req,
@@ -51,8 +52,10 @@ const authorize = (...permissions) => {
       });
     }
 
+    // Expand user permissions (e.g., manage_users -> create_user, read_user, etc.)
+    const userPermissions = expandPermissions(req.user.permissions || []);
+    
     // Check if user has the required permissions
-    const userPermissions = req.user.permissions || [];
     const hasPermission = permissions.every(perm => userPermissions.includes(perm));
 
     if (!hasPermission) {
