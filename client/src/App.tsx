@@ -10,9 +10,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Analytics } from "@vercel/analytics/react";
 
-import LoginPage from "./pages/LoginPage";
-  import NotFoundPage from "./pages/NotFoundPage";
-import RegisterPage from "./pages/RegisterPage";
 import ServerWakingUp from "./components/ServerWakingUp";
 
 import GlobalSearch from "./components/GlobalSearch";
@@ -31,6 +28,18 @@ const UsersPage = lazy(
 
 const RolesPage = lazy(
   () => import("./pages/RolesPage")
+);
+
+const LoginPage = lazy(
+  () => import("./pages/LoginPage")
+);
+
+const RegisterPage = lazy(
+  () => import("./pages/RegisterPage")
+);
+
+const NotFoundPage = lazy(
+  () => import("./pages/NotFoundPage")
 );
 
 function ProtectedRoute({
@@ -132,13 +141,21 @@ function App() {
         toastClassName="!bg-gray-800 !text-white !rounded-lg !shadow-lg !border !border-gray-700"
         progressClassName="!bg-blue-500"
       />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:font-medium"
+      >
+        Skip to main content
+      </a>
       <Navbar />
       <Routes>
         <Route
           path="/login"
           element={
             <PublicRoute>
-              <LoginPage />
+              <Suspense fallback={<div>Loading...</div>}>
+                <LoginPage />
+              </Suspense>
             </PublicRoute>
           }
         />
@@ -147,7 +164,9 @@ function App() {
           path="/register"
           element={
             <PublicRoute>
-              <RegisterPage />
+              <Suspense fallback={<div>Loading...</div>}>
+                <RegisterPage />
+              </Suspense>
             </PublicRoute>
           }
         />
@@ -213,7 +232,11 @@ function App() {
 
         <Route
           path="*"
-          element={<NotFoundPage />}
+          element={
+            <Suspense fallback={<div>Loading...</div>}>
+              <NotFoundPage />
+            </Suspense>
+          }
         />
       </Routes>
       <Analytics />

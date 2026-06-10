@@ -102,7 +102,7 @@ function Navbar() {
           <button
             onClick={toggleTheme}
             className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-300 text-gray-700 transition-all duration-200 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-            aria-label="Toggle theme"
+            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
           >
             {theme === "light" ? (
               <Moon size={18} />
@@ -118,6 +118,8 @@ function Navbar() {
                   setProfileOpen(!profileOpen)
                 }
                 className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-1 transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+                aria-label="User menu"
+                aria-expanded={profileOpen}
               >
                 <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 font-semibold text-white text-xs">
                   {(user?.name || "U")
@@ -186,6 +188,8 @@ function Navbar() {
         <button
           className="md:hidden"
           onClick={() => setOpen(!open)}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
         >
           {open ? (
             <X size={28} />

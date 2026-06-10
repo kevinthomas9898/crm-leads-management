@@ -1,0 +1,10 @@
+# robots.txt for CRM Leads Management
+
+User-agent: *
+Allow: /
+
+# Disallow admin routes if any
+# Disallow: /admin
+
+# Sitemap
+Sitemap: https://crm-leads-management-server.onrender.com/sitemap.xml

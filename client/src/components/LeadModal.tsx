@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import type { Lead } from "../types/lead";
 import TextInput from "./TextInput";
@@ -34,6 +34,9 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
     },
   });
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     if (lead) {
       reset({
@@ -54,6 +57,73 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
     }
   }, [lead, isOpen, reset]);
 
+  // Focus management and trap
+  useEffect(() => {
+    if (isOpen) {
+      // Store previously focused element
+      previousActiveElementRef.current = document.activeElement as HTMLElement;
+      
+      // Focus on first input after a short delay
+      const timeout = setTimeout(() => {
+        const firstInput = modalRef.current?.querySelector('input') as HTMLInputElement;
+        if (firstInput) {
+          firstInput.focus();
+        }
+      }, 100);
+
+      // Trap focus within modal
+      const handleTab = (e: KeyboardEvent) => {
+        if (e.key !== 'Tab') return;
+        
+        const modal = modalRef.current;
+        if (!modal) return;
+        
+        const focusableElements = modal.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+        
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
+      };
+
+      // Handle Escape key
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          onClose();
+        }
+      };
+
+      document.addEventListener('keydown', handleTab);
+      document.addEventListener('keydown', handleEscape);
+
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        clearTimeout(timeout);
+        document.removeEventListener('keydown', handleTab);
+        document.removeEventListener('keydown', handleEscape);
+        document.body.style.overflow = '';
+        
+        // Return focus to previous element
+        if (previousActiveElementRef.current) {
+          previousActiveElementRef.current.focus();
+        }
+      };
+    }
+  }, [isOpen, onClose]);
+
   const onFormSubmit = (data: {
     name: string;
     email: string;
@@ -67,10 +137,17 @@ const LeadModal = ({ isOpen, onClose, lead, onSubmit }: LeadModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 dark:bg-gray-800">
+    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
+      <div 
+        ref={modalRef}
+        className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 dark:bg-gray-800"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          <h2 id="modal-title" className="text-xl font-bold text-gray-900 dark:text-white">
             {lead ? "Edit Lead" : "Add New Lead"}
           </h2>
         </div>
