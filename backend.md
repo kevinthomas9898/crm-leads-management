@@ -1,530 +1,686 @@
-# Backend Development Learning Guide
+# Backend Code Explained
 
-## Overview
-This guide covers everything you need to learn backend development, tailored to your CRM project's tech stack (Node.js, Express, MongoDB, JWT).
+This guide explains your actual backend code line by line.
 
----
+## 1. Your Actual Backend Code Explained (Line by Line)
 
-## 1. Backend Fundamentals
+### app.js - The Main Server File
 
-### What is Backend Development?
-- **Definition**: Server-side logic that powers web applications
-- **Responsibilities**: Data storage, API endpoints, authentication, business logic
-- **Key Difference from Frontend**: Frontend = what users see; Backend = what makes it work
+This is where your server starts. Let's go through it:
 
-### Core Concepts to Learn
-- **Client-Server Architecture**: How browsers talk to servers
-- **HTTP Protocol**: Request/response cycle, methods (GET, POST, PUT, DELETE), status codes
-- **RESTful APIs**: Design principles for web services
-- **JSON**: Data format for API communication
-- **Middleware**: Functions that process requests before they reach your route handlers
+```javascript
+// Lines 1-4: Import required packages
+const express = require("express");      // Express framework
+const cors = require("cors");            // Allow frontend to talk to backend
+const dotenv = require("dotenv");        // Load environment variables from .env file
+const rateLimit = require("express-rate-limit");  // Limit requests to prevent abuse
 
-### Learning Resources
-- MDN Web Docs: "HTTP" and "REST API" sections
-- FreeCodeCamp: "Back End Development and APIs" certification
-- "RESTful Web APIs" by Leonard Richardson (book)
+// Line 7: Import database connection function
+const connectDB = require("./config/db");
 
----
+// Lines 10-14: Import all route files
+const leadRoutes = require("./routes/leadRoutes");
+const searchRoutes = require("./routes/searchRoutes");
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const roleRoutes = require("./routes/roleRoutes");
 
-## 2. Node.js Fundamentals
+// Line 17: Load environment variables (like MONGO_URI, JWT_SECRET, PORT)
+dotenv.config();
 
-### What is Node.js?
-- **Definition**: JavaScript runtime that runs outside the browser
-- **Why Use It**: Same language as frontend (JavaScript), huge ecosystem (npm)
-- **Event Loop**: Understanding asynchronous, non-blocking I/O
+// Lines 20-27: Error handlers for crashes
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err);
+});
 
-### Key Concepts to Learn
-- **npm (Node Package Manager)**: Installing and managing dependencies
-- **CommonJS vs ES Modules**: `require()` vs `import/export`
-- **Asynchronous Programming**: Callbacks, Promises, async/await
-- **File System**: Reading/writing files
-- **Streams**: Handling large data efficiently
-- **Error Handling**: Try/catch, error-first callbacks
+// Line 30: Connect to MongoDB
+connectDB();
 
-### Learning Resources
-- Node.js official documentation (nodejs.org)
-- "Node.js Design Patterns" by Mario Casciaro (book)
-- Node.js School workshops (nodeschool.io)
-- YouTube: "Net Ninja" Node.js tutorials
+// Line 32: Create Express app
+const app = express();
 
----
+// Lines 35-36: Setup middleware
+app.use(cors());              // Allow frontend requests
+app.use(express.json());      // Parse JSON from request body
 
-## 3. Express.js Framework
+// Lines 39-45: Rate limiter configuration
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,  // 15 minutes
+  max: 100,                   // Max 100 requests per 15 minutes per IP
+  message: "Too many requests from this IP, please try again after 15 minutes",
+});
 
-### What is Express?
-- **Definition**: Minimal web framework for Node.js
-- **Why Use It**: Simplifies routing, middleware, HTTP handling
-- **Philosophy**: Unopinionated, flexible, extensible
+// Line 48: Apply rate limiting to all /api routes
+app.use("/api", limiter);
 
-### Key Concepts to Learn
-- **Routing**: Defining endpoints (app.get, app.post, etc.)
-- **Middleware Chain**: How middleware processes requests sequentially
-- **Request/Response Objects**: Accessing data and sending responses
-- **Route Parameters**: Dynamic URLs (e.g., `/users/:id`)
-- **Query Parameters**: URL query strings (e.g., `?page=1&limit=10`)
-- **Request Body**: Parsing JSON/form data
-- **Error Handling**: Custom error middleware
-- **Express App Structure**: Organizing routes, controllers, middleware
+// Lines 52-68: Setup routes
+app.use("/api/auth", authRoutes);      // Login/register endpoints
+app.use("/api/leads", leadRoutes);    // Lead CRUD endpoints
+app.use("/api/search", searchRoutes);  // Search endpoints
+app.use("/api/users", userRoutes);    // User management
+app.use("/api/roles", roleRoutes);    // Role management
 
-### Learning Resources
-- Express.js official documentation (expressjs.com)
-- "Express.js in Action" by Evan Hahn (book)
-- YouTube: "Traversy Media" Express tutorials
-- Express GitHub repository examples
+// Lines 55-57: Test route
+app.get("/", (req, res) => {
+  res.send("API Running");
+});
 
----
+// Lines 60-62: Health check (for deployment platforms like Render)
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "Server is healthy" });
+});
 
-## 4. Database Fundamentals
+// Line 71: Get port from environment or use 5000
+const PORT = process.env.PORT || 5000;
 
-### What is a Database?
-- **Definition**: Organized collection of data
-- **Types**: SQL (relational) vs NoSQL (document-based)
-- **Your Project Uses**: MongoDB (NoSQL)
+// Lines 73-75: Start server
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+```
 
-### MongoDB Concepts to Learn
-- **Document Model**: JSON-like documents instead of tables
-- **Collections**: Groups of documents (like tables)
-- **CRUD Operations**: Create, Read, Update, Delete
-- **Querying**: Finding documents with filters
-- **Indexing**: Improving query performance
-- **Aggregation Pipeline**: Complex data transformations
-- **Relationships**: Embedding vs referencing documents
-- **Schema Design**: How to structure your data
-
-### Mongoose (ODM for MongoDB)
-- **What is Mongoose**: Object Data Mapping library
-- **Schemas**: Defining document structure and validation
-- **Models**: Constructor for creating documents
-- **Middleware**: Pre/post hooks (e.g., hashing passwords before save)
-- **Validation**: Built-in and custom validators
-- **Population**: Automatically referencing related documents
-
-### Learning Resources
-- MongoDB University (free courses)
-- MongoDB official documentation
-- "MongoDB: The Definitive Guide" (book)
-- Mongoose documentation (mongoosejs.com)
-- YouTube: "Academind" MongoDB tutorials
+**What this file does:**
+1. Imports all needed packages
+2. Connects to database
+3. Sets up middleware (security, JSON parsing)
+4. Defines which route handles which URL
+5. Starts the server on a port
 
 ---
 
-## 5. Authentication & Authorization
+### db.js - Database Connection
 
-### Authentication vs Authorization
-- **Authentication**: Verifying who someone is (login)
-- **Authorization**: Verifying what they can do (permissions)
+```javascript
+// Line 1: Import Mongoose
+const mongoose = require("mongoose");
 
-### Authentication Methods
-- **Session-based**: Storing user data on server
-- **Token-based (JWT)**: Stateless, your project uses this
-- **OAuth**: Third-party login (Google, GitHub, etc.)
+// Line 3: Define async function to connect to DB
+const connectDB = async () => {
+  try {
+    // Line 5: Connect to MongoDB using URI from .env file
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB Connected");
+  } catch (error) {
+    // Lines 8-10: If connection fails, log error but don't crash
+    console.log("MongoDB Connection Error:", error.message);
+  }
+};
 
-### JWT (JSON Web Tokens)
-- **What is JWT**: Self-contained token with user data
-- **Structure**: Header, Payload, Signature
-- **How it Works**: Server signs token, client sends it with each request
-- **Security**: Never store sensitive data in JWT payload
-- **Expiration**: Tokens should expire and be refreshable
+// Line 14: Export function so other files can use it
+module.exports = connectDB;
+```
 
-### Password Security
-- **Hashing**: One-way encryption (bcrypt, bcryptjs)
-- **Salting**: Adding random data before hashing
-- **Never Store Plain Text Passwords**: Always hash them
-
-### Role-Based Access Control (RBAC)
-- **Roles**: Groups of permissions (e.g., admin, user)
-- **Permissions**: Granular actions (e.g., CREATE_LEAD, READ_LEAD)
-- **Permission Expansion**: Super permissions that expand to granular ones
-- **Middleware**: Checking permissions before allowing access
-
-### Learning Resources
-- JWT.io (interactive JWT debugger)
-- "OAuth 2.0 in Action" (book)
-- OWASP Authentication Cheat Sheet
-- YouTube: "Web Dev Simplified" JWT tutorials
+**What this file does:**
+- Connects to MongoDB using the connection string from your .env file
+- If connection fails, it logs the error but doesn't crash the server
 
 ---
 
-## 6. API Design Best Practices
+### permissions.js - Permission Definitions
 
-### RESTful Design Principles
-- **Resource-based URLs**: Nouns, not verbs (e.g., `/users` not `/getUsers`)
-- **HTTP Methods**: Use correct methods (GET for read, POST for create, etc.)
-- **Status Codes**: Return appropriate codes (200, 201, 400, 401, 403, 404, 500)
-- **Versioning**: Consider API versioning (e.g., `/api/v1/users`)
-- **Consistent Naming**: Use consistent naming conventions
-- **Pagination**: Return paginated results for large datasets
-- **Filtering/Sorting**: Allow clients to filter and sort data
-- **Error Responses**: Consistent error format with helpful messages
+```javascript
+// Lines 10-32: Define all permissions as constants
+const PERMISSIONS = {
+  CREATE_LEAD: "create_lead",      // Permission to create leads
+  READ_LEAD: "read_lead",          // Permission to read leads
+  UPDATE_LEAD: "update_lead",      // Permission to update leads
+  DELETE_LEAD: "delete_lead",      // Permission to delete leads
+  CREATE_USER: "create_user",      // Permission to create users
+  READ_USER: "read_user",          // Permission to read users
+  UPDATE_USER: "update_user",      // Permission to update users
+  DELETE_USER: "delete_user",      // Permission to delete users
+  CREATE_ROLE: "create_role",      // Permission to create roles
+  READ_ROLE: "read_role",          // Permission to read roles
+  UPDATE_ROLE: "update_role",      // Permission to update roles
+  DELETE_ROLE: "delete_role",      // Permission to delete roles
+  MANAGE_USERS: "manage_users",    // Super permission (grants all user permissions)
+  MANAGE_ROLES: "manage_roles",    // Super permission (grants all role permissions)
+};
 
-### API Security
-- **HTTPS**: Always use HTTPS in production
-- **Rate Limiting**: Prevent abuse
-- **Input Validation**: Never trust client data
-- **SQL/NoSQL Injection**: Parameterize queries
-- **CORS**: Configure cross-origin resource sharing
-- **Helmet**: Security headers for Express
+// Lines 38-42: Group permissions together
+const PERMISSION_GROUPS = {
+  LEADS: [PERMISSIONS.CREATE_LEAD, PERMISSIONS.READ_LEAD, PERMISSIONS.UPDATE_LEAD, PERMISSIONS.DELETE_LEAD],
+  USERS: [PERMISSIONS.CREATE_USER, PERMISSIONS.READ_USER, PERMISSIONS.UPDATE_USER, PERMISSIONS.DELETE_USER],
+  ROLES: [PERMISSIONS.CREATE_ROLE, PERMISSIONS.READ_ROLE, PERMISSIONS.UPDATE_ROLE, PERMISSIONS.DELETE_ROLE],
+};
 
-### Learning Resources
-- "RESTful Web APIs" by Leonard Richardson (book)
-- "API Design Patterns" by JJ Geewax (book)
-- Zalando RESTful API guidelines
-- YouTube: "Fireship" API design videos
+// Lines 67-78: Function to expand super permissions
+const expandPermissions = (permissions) => {
+  const expanded = new Set(permissions);  // Create a Set from permissions
 
----
+  // If user has MANAGE_USERS, add all individual user permissions
+  if (expanded.has(PERMISSIONS.MANAGE_USERS)) {
+    PERMISSION_GROUPS.USERS.forEach(perm => expanded.add(perm));
+  }
 
-## 7. Environment Configuration
+  // If user has MANAGE_ROLES, add all individual role permissions
+  if (expanded.has(PERMISSIONS.MANAGE_ROLES)) {
+    PERMISSION_GROUPS.ROLES.forEach(perm => expanded.add(perm));
+  }
 
-### Environment Variables
-- **What are they**: Configuration values outside your code
-- **Why use them**: Security, different configs for dev/prod
-- **Common variables**: Database URLs, API keys, JWT secrets, ports
-- **.env files**: Local environment variables (never commit to git)
-- **dotenv package**: Loading .env files in Node.js
+  return Array.from(expanded);  // Convert back to array
+};
+```
 
-### Best Practices
-- **Never commit secrets**: Add .env to .gitignore
-- **Use different configs**: Development, staging, production
-- **Document required variables**: README with required .env variables
-- **Validation**: Check for required environment variables on startup
-
-### Learning Resources
-- "The Twelve-Factor App" (configuration section)
-- dotenv npm documentation
-- YouTube: "Traversy Media" environment variables tutorial
-
----
-
-## 8. Error Handling
-
-### Types of Errors
-- **400 Bad Request**: Invalid input
-- **401 Unauthorized**: Not logged in
-- **403 Forbidden**: Logged in but no permission
-- **404 Not Found**: Resource doesn't exist
-- **500 Internal Server Error**: Server bug
-
-### Error Handling Strategies
-- **Global Error Handler**: Catch-all middleware in Express
-- **Custom Error Classes**: Create specific error types
-- **Logging**: Log errors for debugging
-- **User-friendly Messages**: Don't expose internal details
-- **Stack Traces**: Include in development, not production
-
-### Learning Resources
-- Express error handling documentation
-- "Error Handling in Node.js" (Joyent blog)
-- YouTube: "Net Ninja" Express error handling
+**What this file does:**
+- Defines all permission strings in one place (so you don't have typos)
+- Groups related permissions together
+- Has a function to expand "super permissions" into individual ones
+  - Example: If someone has "manage_users", they automatically get create_user, read_user, update_user, delete_user
 
 ---
 
-## 9. Testing Backend
+### authMiddleware.js - Authentication & Authorization
 
-### Types of Tests
-- **Unit Tests**: Test individual functions
-- **Integration Tests**: Test how components work together
-- **End-to-End Tests**: Test complete workflows
+```javascript
+// Lines 4-45: protect middleware - checks if user is logged in
+const protect = (req, res, next) => {
+  // Line 9-10: Get Authorization header from request
+  const authHeader = req.headers.authorization;
 
-### Testing Tools
-- **Jest**: Testing framework (your project may use this)
-- **Supertest**: HTTP assertion library for Express
-- **Mocha/Chai**: Alternative testing framework
-- **Postman**: Manual API testing
+  // Lines 12-24: Check if token exists and starts with "Bearer"
+  if (!authHeader || !authHeader.startsWith("Bearer")) {
+    return res.status(401).json({ message: "Not authorized" });
+  }
 
-### What to Test
-- **Route handlers**: Correct responses for different inputs
-- **Middleware**: Authentication, authorization, validation
-- **Database operations**: CRUD operations work correctly
-- **Error cases**: Invalid inputs, missing data, permissions
+  try {
+    // Line 27-28: Extract token (remove "Bearer " prefix)
+    const token = authHeader.split(" ")[1];
 
-### Learning Resources
-- Jest documentation
-- "Testing JavaScript Applications" by Marios Fakiolas (book)
-- YouTube: "Ben Awad" testing tutorials
+    // Lines 30-34: Verify token using JWT secret
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
----
+    // Line 36: Attach user info to request object
+    req.user = decoded;
 
-## 10. Deployment
+    // Line 38: Continue to next middleware/route handler
+    next();
+  } catch (error) {
+    // Lines 40-43: If token is invalid, send error
+    res.status(401).json({ message: "Invalid token" });
+  }
+};
 
-### Deployment Options
-- **Heroku**: Easy deployment, free tier available
-- **Railway**: Modern deployment platform
-- **Render**: Simple deployment for Node.js apps
-- **AWS/Azure/GCP**: Cloud providers (more complex)
-- **VPS**: DigitalOcean, Linode (full control)
+// Lines 47-69: authorize middleware - checks if user has permission
+const authorize = (...permissions) => {
+  return (req, res, next) => {
+    // Lines 49-53: Check if user exists (should be set by protect middleware)
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authorized, no user found" });
+    }
 
-### Deployment Checklist
-- **Environment Variables**: Set up in production
-- **Database**: Use production database (not local)
-- **Build Process**: Optimize for production
-- **Security**: HTTPS, secure headers
-- **Monitoring**: Logs, error tracking
-- **Scaling**: Handle increased traffic
+    // Line 56: Expand user's permissions (convert super permissions to granular)
+    const userPermissions = expandPermissions(req.user.permissions || []);
 
-### Learning Resources
-- Heroku deployment guide
-- "The Twelve-Factor App" (deployment section)
-- YouTube: "Traversy Media" deployment tutorials
+    // Line 59: Check if user has ALL required permissions
+    const hasPermission = permissions.every(perm => userPermissions.includes(perm));
 
----
+    // Lines 61-65: If user doesn't have permission, send 403 error
+    if (!hasPermission) {
+      return res.status(403).json({ message: "Not authorized to access this resource" });
+    }
 
-## 11. Security Best Practices
+    // Line 67: Continue to next middleware/route handler
+    next();
+  };
+};
+```
 
-### Critical Security Concepts
-- **Input Validation**: Never trust client data
-- **Output Encoding**: Prevent XSS attacks
-- **SQL/NoSQL Injection**: Use parameterized queries
-- **Authentication**: Strong password policies
-- **Authorization**: Check permissions on every protected route
-- **HTTPS**: Always use in production
-- **CORS**: Configure properly
-- **Rate Limiting**: Prevent brute force attacks
-- **Security Headers**: Use Helmet.js
-- **Secrets Management**: Never commit secrets
-
-### OWASP Top 10
-- Learn about the top 10 web security risks
-- OWASP Cheat Sheet Series
-- Regularly audit your code for vulnerabilities
-
-### Learning Resources
-- OWASP Top 10 documentation
-- "Web Application Security" by Andrew Hoffman (book)
-- YouTube: "Fireship" security videos
+**What this file does:**
+- `protect`: Checks if user sent a valid JWT token. If yes, adds user info to request.
+- `authorize`: Checks if user has specific permissions. Uses the expandPermissions function to handle super permissions.
 
 ---
 
-## 12. Debugging & Monitoring
+### Lead.js - Mongoose Model (Database Schema)
 
-### Debugging Techniques
-- **Console.log**: Basic debugging
-- **Node.js Debugger**: Built-in debugging
-- **VS Code Debugger**: Visual debugging
-- **Postman**: Test endpoints independently
-- **Logging**: Structured logging (winston, pino)
+```javascript
+// Line 1: Import Mongoose
+const mongoose = require("mongoose");
 
-### Monitoring Tools
-- **Logs**: Application logs
-- **Error Tracking**: Sentry, Bugsnag
-- **Performance Monitoring**: New Relic, Datadog
-- **Uptime Monitoring**: UptimeRobot
+// Lines 3-34: Define schema for Lead documents
+const leadSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,        // Must be a string
+      required: true,      // This field is required
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    company: {
+      type: String,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["New", "Contacted", "Qualified", "Lost"],  // Must be one of these values
+      default: "New",                                   // Default value if not provided
+    },
+    owner: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,      // Automatically add createdAt and updatedAt fields
+  }
+);
 
-### Learning Resources
-- Node.js debugging documentation
-- "Debugging Node.js Applications" (blog posts)
-- YouTube: "Fireship" debugging videos
+// Lines 37-45: Create indexes for faster queries
+leadSchema.index({ status: 1 });        // Index on status
+leadSchema.index({ owner: 1 });         // Index on owner
+leadSchema.index({ createdAt: -1 });    // Index on createdAt (descending)
+leadSchema.index({
+  name: "text",      // Text index for search
+  email: "text",
+  company: "text",
+});
 
----
+// Line 47: Create and export the model
+module.exports = mongoose.model("Lead", leadSchema);
+```
 
-## 13. Learning Path (Recommended Order)
-
-### Phase 1: Fundamentals (2-3 weeks)
-1. HTTP protocol basics
-2. Node.js fundamentals (npm, async/await)
-3. Express.js basics (routing, middleware)
-4. MongoDB basics (CRUD operations)
-
-### Phase 2: Building APIs (2-3 weeks)
-1. RESTful API design
-2. Express app structure
-3. Mongoose models and schemas
-4. Building CRUD endpoints
-
-### Phase 3: Authentication (1-2 weeks)
-1. Password hashing (bcrypt)
-2. JWT implementation
-3. Authentication middleware
-4. Protected routes
-
-### Phase 4: Advanced Topics (2-3 weeks)
-1. Role-based access control
-2. Error handling
-3. Input validation
-4. API security
-
-### Phase 5: Production Readiness (1-2 weeks)
-1. Environment configuration
-2. Testing
-3. Deployment
-4. Monitoring
-
----
-
-## 14. Practice Projects
-
-### Beginner Level
-1. **To-Do API**: CRUD operations with MongoDB
-2. **Blog API**: Posts, comments, user authentication
-3. **Weather API**: Fetch data from external API, cache results
-
-### Intermediate Level
-1. **E-commerce API**: Products, cart, orders, payments
-2. **Social Media API**: Users, posts, likes, follows
-3. **File Upload API**: Upload, store, and serve files
-
-### Advanced Level
-1. **Real-time Chat API**: WebSockets, rooms, messages
-2. **Video Streaming API**: Stream video files
-3. **Analytics Dashboard API**: Complex aggregations, reporting
+**What this file does:**
+- Defines the structure of Lead documents in MongoDB
+- Sets validation rules (required fields, allowed values)
+- Creates indexes to make queries faster
+- Exports a "Lead" model that you can use to create, read, update, delete leads
 
 ---
 
-## 15. Key References for Your CRM Project
+### leadController.js - Business Logic for Leads
 
-### Your Tech Stack Documentation
-- **Node.js**: https://nodejs.org/docs/
-- **Express.js**: https://expressjs.com/en/api.html
-- **MongoDB**: https://docs.mongodb.com/
-- **Mongoose**: https://mongoosejs.com/docs/
-- **JWT**: https://jwt.io/
-- **bcryptjs**: https://github.com/dcodeIO/bcrypt.js
+```javascript
+// Line 1: Import Lead model
+const Lead = require("../models/Lead");
 
-### Project-Specific Concepts
-- **Permission System**: Study `server/src/config/permissions.js`
-- **Auth Middleware**: Study `server/src/middleware/authMiddleware.js`
-- **Route Authorization**: Study how `authorize()` is used in routes
-- **Mongoose Models**: Study `server/src/models/` directory
-- **Aggregation Pipeline**: Study `server/src/controllers/leadController.js`
+// Lines 6-81: getLeads function - get all leads with filtering/pagination
+const getLeads = async (req, res) => {
+  try {
+    // Lines 9-17: Get query parameters from URL
+    const page = parseInt(req.query.page) || 1;           // Page number (default 1)
+    const limit = parseInt(req.query.limit) || 20;        // Items per page (default 20)
+    const sortBy = req.query.sortBy || "createdAt";       // Sort field (default createdAt)
+    const sortOrder = req.query.sortOrder === "asc" ? 1 : -1;  // Sort direction
+    const status = req.query.status;                      // Filter by status
+    const owner = req.query.owner;                        // Filter by owner
+    const search = req.query.search;                      // Search term
+
+    // Line 20: Calculate how many documents to skip
+    const skip = (page - 1) * limit;
+
+    // Line 23: Build match stage for aggregation
+    const matchStage = {};
+
+    // Lines 26-32: Add filters if provided
+    if (status) {
+      matchStage.status = status;
+    }
+    if (owner) {
+      matchStage.owner = owner;
+    }
+
+    // Lines 35-41: Add search filter (search in name, email, company)
+    if (search) {
+      matchStage.$or = [
+        { name: { $regex: search, $options: "i" } },      // Case-insensitive regex
+        { email: { $regex: search, $options: "i" } },
+        { company: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Lines 44-62: MongoDB aggregation pipeline
+    const leads = await Lead.aggregate([
+      { $match: matchStage },      // Filter documents
+      { $sort: { [sortBy]: sortOrder } },  // Sort documents
+      { $skip: skip },             // Skip documents for pagination
+      { $limit: limit },           // Limit number of results
+    ]);
+
+    // Line 65: Count total documents matching filters
+    const total = await Lead.countDocuments(matchStage);
+
+    // Lines 67-73: Send response with data and pagination info
+    res.status(200).json({
+      data: leads,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    // Lines 75-79: Handle errors
+    console.log(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// Lines 83-128: createLead function - create a new lead
+const createLead = async (req, res) => {
+  try {
+    // Line 85: Get data from request body
+    const { name, email, company, status, owner } = req.body;
+
+    // Lines 88-92: Validate required fields
+    if (!name || !email || !company || !owner) {
+      return res.status(400).json({
+        message: "Name, email, company, and owner are required",
+      });
+    }
+
+    // Lines 95-99: Validate email format
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    // Lines 102-107: Check if lead with this email already exists
+    const existingLead = await Lead.findOne({ email });
+    if (existingLead) {
+      return res.status(400).json({ message: "Lead with this email already exists" });
+    }
+
+    // Lines 110-116: Create new lead in database
+    const lead = await Lead.create({
+      name,
+      email,
+      company,
+      status: status || "New",  // Default to "New" if not provided
+      owner,
+    });
+
+    // Lines 118-121: Send response with created lead
+    res.status(201).json({
+      data: lead,
+      message: "Lead created successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// Lines 130-205: updateLead function - update an existing lead
+const updateLead = async (req, res) => {
+  try {
+    // Line 132: Get lead ID from URL parameters
+    const { id } = req.params;
+    // Line 133: Get updated data from request body
+    const { name, email, company, status, owner } = req.body;
+
+    // Lines 136-141: Find lead by ID
+    const lead = await Lead.findById(id);
+    if (!lead) {
+      return res.status(404).json({ message: "Lead not found" });
+    }
+
+    // Lines 144-180: Validate each field if provided
+    if (name !== undefined && name === "") {
+      return res.status(400).json({ message: "Name cannot be empty" });
+    }
+    if (email !== undefined) {
+      if (email === "") {
+        return res.status(400).json({ message: "Email cannot be empty" });
+      }
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: "Invalid email format" });
+      }
+      // Check if email already exists for another lead
+      const existingLead = await Lead.findOne({ email, _id: { $ne: id } });
+      if (existingLead) {
+        return res.status(400).json({ message: "Lead with this email already exists" });
+      }
+    }
+
+    // Lines 183-193: Update lead (only update fields that are provided)
+    const updatedLead = await Lead.findByIdAndUpdate(
+      id,
+      {
+        ...(name !== undefined && { name }),      // Only include if provided
+        ...(email !== undefined && { email }),
+        ...(company !== undefined && { company }),
+        ...(status !== undefined && { status }),
+        ...(owner !== undefined && { owner }),
+      },
+      { new: true, runValidators: true }  // Return updated doc, run validation
+    );
+
+    // Lines 195-198: Send response
+    res.status(200).json({
+      data: updatedLead,
+      message: "Lead updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// Lines 207-231: deleteLead function - delete a lead
+const deleteLead = async (req, res) => {
+  try {
+    // Line 209: Get lead ID from URL
+    const { id } = req.params;
+
+    // Lines 212-217: Find lead
+    const lead = await Lead.findById(id);
+    if (!lead) {
+      return res.status(404).json({ message: "Lead not found" });
+    }
+
+    // Line 220: Delete lead
+    await Lead.findByIdAndDelete(id);
+
+    // Lines 222-224: Send response
+    res.status(200).json({ message: "Lead deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+```
+
+**What this file does:**
+- Contains functions that handle the business logic for leads
+- `getLeads`: Gets leads with filtering, sorting, pagination
+- `createLead`: Creates a new lead with validation
+- `updateLead`: Updates an existing lead with validation
+- `deleteLead`: Deletes a lead
 
 ---
 
-## 16. Common Backend Interview Questions
+### leadRoutes.js - Route Definitions
 
-### Conceptual Questions
-- What is the difference between authentication and authorization?
-- Explain the request-response cycle in HTTP
-- What is middleware in Express?
-- What is the event loop in Node.js?
-- SQL vs NoSQL: When to use which?
+```javascript
+// Line 1: Import Express
+const express = require("express");
 
-### Practical Questions
-- How would you design a RESTful API for X?
-- How do you handle errors in Express?
-- How do you secure API endpoints?
-- How do you optimize database queries?
-- How do you handle file uploads?
+// Line 3: Create router
+const router = express.Router();
 
-### Learning Resources
-- "System Design Interview" by Alex Xu (books)
-- LeetCode (for algorithm practice)
-- Pramp (mock interviews)
-- YouTube: "Fireship" interview prep videos
+// Line 5: Import controller functions
+const { getLeads, createLead, updateLead, deleteLead } = require("../controllers/leadController");
 
----
+// Line 6: Import middleware
+const { protect, authorize } = require("../middleware/authMiddleware");
 
-## 17. Additional Resources
+// Line 7: Import permissions
+const { PERMISSIONS } = require("../config/permissions");
 
-### Books
-- "Node.js Design Patterns" by Mario Casciaro
-- "Express.js in Action" by Evan Hahn
-- "MongoDB: The Definitive Guide"
-- "RESTful Web APIs" by Leonard Richardson
-- "Web Application Security" by Andrew Hoffman
+// Line 10: Apply protect middleware to ALL routes in this file
+router.use(protect);
 
-### Online Courses
-- FreeCodeCamp: "Back End Development and APIs"
-- Udemy: "Node.js - The Complete Guide" by Maximilian Schwarzmüller
-- Coursera: "MongoDB University" courses
-- Pluralsight: Node.js and Express courses
+// Line 13: GET /api/leads - requires READ_LEAD permission
+router.get("/", authorize(PERMISSIONS.READ_LEAD), getLeads);
 
-### YouTube Channels
-- Traversy Media
-- Net Ninja
-- Web Dev Simplified
-- Fireship
-- Academind
+// Line 16: POST /api/leads - requires CREATE_LEAD permission
+router.post("/", authorize(PERMISSIONS.CREATE_LEAD), createLead);
 
-### Documentation Sites
-- MDN Web Docs (developer.mozilla.org)
-- Node.js Documentation (nodejs.org)
-- Express.js Documentation (expressjs.com)
-- MongoDB Documentation (docs.mongodb.com)
+// Line 17: PUT /api/leads/:id - requires UPDATE_LEAD permission
+router.put("/:id", authorize(PERMISSIONS.UPDATE_LEAD), updateLead);
 
-### Communities
-- Stack Overflow (tag: node.js, express, mongodb)
-- Reddit: r/node, r/webdev
-- Discord: Node.js servers
-- GitHub: Explore open-source Node.js projects
+// Line 18: DELETE /api/leads/:id - requires DELETE_LEAD permission
+router.delete("/:id", authorize(PERMISSIONS.DELETE_LEAD), deleteLead);
+```
+
+**What this file does:**
+- Defines which URL maps to which controller function
+- Applies middleware (protect, authorize) to routes
+- The `:id` in the URL is a parameter that gets passed to the controller
+
+**Example:**
+- When frontend sends `GET /api/leads?page=1&limit=10`
+  1. `protect` middleware runs first (checks JWT token)
+  2. `authorize(PERMISSIONS.READ_LEAD)` runs next (checks if user has read_lead permission)
+  3. If both pass, `getLeads` controller function runs
+  4. Controller gets leads from database and sends response
 
 ---
 
-## 18. Quick Reference: Your Project Structure
+### authController.js - Login & Register
 
-### Backend Files to Study
-- `server/src/app.js` - Express app setup
-- `server/src/config/db.js` - MongoDB connection
-- `server/src/config/permissions.js` - Permission constants
-- `server/src/models/` - Mongoose schemas (Lead, User, Role)
-- `server/src/controllers/` - Business logic for each resource
-- `server/src/middleware/authMiddleware.js` - JWT verification + authorization
-- `server/src/routes/` - API endpoint definitions
-- `server/src/seed/seedLeads.js` - Database seeding script
+```javascript
+// Lines 1-2: Import packages
+const bcrypt = require("bcryptjs");  // For password hashing
+const jwt = require("jsonwebtoken");  // For creating JWT tokens
 
-### Key Patterns in Your Project
-- **JWT Authentication**: Token stored in localStorage, sent in Authorization header
-- **Permission Expansion**: Super permissions expand to granular ones
-- **Role-Based Access**: Users have roles, roles have permissions
-- **Aggregation Pipeline**: Efficient filtering/sorting/pagination in MongoDB
-- **Indexes**: Compound indexes for performance
+// Lines 4-5: Import models
+const User = require("../models/User");
+const Role = require("../models/Role");
+
+// Lines 11-56: registerUser function
+const registerUser = async (req, res) => {
+  try {
+    // Line 13: Get data from request body
+    const { name, email, password } = req.body;
+
+    // Lines 16-22: Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Line 25: Hash password (10 is the salt rounds)
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Lines 28-29: Get default role ("user")
+    const defaultRole = await Role.findOne({ name: "user" });
+
+    // Lines 31-36: Create user with hashed password
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,  // Store hashed password, not plain text
+      role: defaultRole ? defaultRole._id : null,
+    });
+
+    // Lines 39-48: Send response (don't send password back)
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+// Lines 62-123: loginUser function
+const loginUser = async (req, res) => {
+  try {
+    // Line 64: Get email and password from request body
+    const { email, password } = req.body;
+
+    // Line 67: Find user and populate role (get role details)
+    const user = await User.findOne({ email }).populate("role");
+
+    // Lines 69-73: Check if user exists
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // Lines 76-79: Compare password with hashed password in database
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    // Lines 81-85: If password doesn't match
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // Line 88: Get permissions from user's role
+    const permissions = user.role && typeof user.role === 'object' ? user.role.permissions : [];
+
+    // Lines 91-103: Create JWT token with user info
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role && typeof user.role === 'object' ? user.role.name : user.role,
+        permissions: permissions,  // Include permissions in token
+      },
+      process.env.JWT_SECRET,  // Secret key to sign token
+      { expiresIn: "7d" }      // Token expires in 7 days
+    );
+
+    // Lines 106-115: Send token and user info
+    res.json({
+      token,  // Frontend will store this
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+```
+
+**What this file does:**
+- `registerUser`: Creates a new user, hashes their password, assigns default role
+- `loginUser`: Verifies credentials, creates JWT token with user info and permissions
+
+**Key points:**
+- Passwords are never stored as plain text - always hashed with bcrypt
+- JWT token contains user ID, role, and permissions
+- Frontend stores the token and sends it with every request
 
 ---
 
-## 19. Tips for Learning Backend
+### How All These Files Work Together
 
-### General Tips
-- **Build Projects**: Theory isn't enough - build real things
-- **Read Documentation**: Learn to read official docs
-- **Debug Actively**: When things break, investigate deeply
-- **Ask Questions**: Use Stack Overflow, communities
-- **Teach Others**: Explaining concepts reinforces learning
+When you click "Login" in your frontend:
 
-### Specific to Your Project
-- **Study the Codebase**: Read through your CRM project files
-- **Make Small Changes**: Modify existing features to understand them
-- **Add New Features**: Practice by adding new endpoints or permissions
-- **Test Everything**: Use Postman to test your API endpoints
-- **Read the Logs**: Check server logs when debugging
+1. **Frontend** sends POST to `/api/auth/login` with email/password
+2. **app.js** routes to `authRoutes`
+3. **authRoutes** calls `loginUser` in `authController`
+4. **authController**:
+   - Finds user in database
+   - Compares password using bcrypt
+   - Creates JWT token with user info
+   - Sends token back to frontend
+5. **Frontend** stores token in localStorage
 
-### Common Mistakes to Avoid
-- **Copying Code Without Understanding**: Always understand what you're using
-- **Ignoring Security**: Never skip authentication/authorization
-- **Hardcoding Values**: Use environment variables
-- **Not Validating Input**: Always validate client data
-- **Ignoring Errors**: Handle errors properly, don't swallow them
+When you click "Get Leads" in your frontend:
 
----
-
-## 20. Next Steps
-
-### Immediate Actions
-1. Read through your project's backend code
-2. Set up Postman and test all API endpoints
-3. Read the documentation for each technology in your stack
-4. Build a simple CRUD API from scratch (separate from your project)
-
-### Medium-term Goals
-1. Complete a beginner backend course (FreeCodeCamp or Udemy)
-2. Build 2-3 practice projects
-3. Learn testing basics for backend
-4. Deploy a backend application to production
-
-### Long-term Goals
-1. Master advanced MongoDB (aggregation, indexing)
-2. Learn real-time features (WebSockets)
-3. Study system design and scalability
-4. Contribute to open-source Node.js projects
+1. **Frontend** sends GET to `/api/leads` with token in Authorization header
+2. **app.js** routes to `leadRoutes`
+3. **leadRoutes** runs `protect` middleware:
+   - Extracts token from header
+   - Verifies token with JWT
+   - Adds user info to request
+4. **leadRoutes** runs `authorize(PERMISSIONS.READ_LEAD)`:
+   - Checks if user has read_lead permission
+5. If authorized, calls `getLeads` in `leadController`
+6. **leadController**:
+   - Gets leads from MongoDB with filters/pagination
+   - Sends leads back to frontend
+7. **Frontend** displays the leads
 
 ---
-
-## Summary
-
-Backend development is about:
-- **Building APIs** that frontend applications consume
-- **Managing data** in databases
-- **Securing applications** with authentication and authorization
-- **Handling errors** gracefully
-- **Deploying and monitoring** production applications
-
-Your CRM project uses a modern, production-ready stack. Study the existing code, understand the patterns, and practice building similar features. The learning path above will take you from beginner to proficient backend developer.
-
-**Remember**: The best way to learn is by doing. Don't just read - build, break, fix, and repeat.
